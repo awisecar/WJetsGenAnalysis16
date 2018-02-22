@@ -2,17 +2,17 @@
 The instructions for running the W+jets analysis code on ntuples to get theoretical systematic uncertainties (PDF set, alpha_s, and scale variations).
 Apichart Hortiantham (11.Sep.2017)
 
-mkdir WJets13TeV_GenTest
-cd WJets13TeV_GenTest
+mkdir WJetsGenAnalysis16
+cd WJetsGenAnalysis16
 cmsrel CMSSW_5_3_20 
 cd CMSSW_5_3_20/src
 cmsenv 
 
--- Clone /WJets13TevGenSyst from the github
-git clone https://github.com/ahortian/WJets13TevGenSyst.git
+-- Clone /WJetsGenAnalysis16 from the github
+git clone https://github.com/awisecar/WJetsGenAnalysis16.git
 
 -- Go to the directory 
-cd WJets13TevGenSyst/TreeAnalysis2012/WJets
+cd WJetsGenAnalysis16/TreeAnalysis2012/WJets
 
 -- Compile RooUnfold
 cd RooUnfold
