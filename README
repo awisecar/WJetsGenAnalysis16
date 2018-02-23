@@ -10,6 +10,8 @@ cmsenv
 
 -- Clone /WJetsGenAnalysis16 from the github
 git clone https://github.com/awisecar/WJetsGenAnalysis16.git
+or
+git clone git@github.com:awisecar/WJetsGenAnalysis16.git
 
 -- Go to the directory 
 cd WJetsGenAnalysis16/TreeAnalysis2012/WJets
@@ -22,10 +24,15 @@ cd -
 
 -- set link
 cd ..
-ln -s /eos/cms/store/user/ahortian/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets13Tev_amcnlo_Syst/170124_034044/0000/DataW_AMCNLO
+ln -s /eos/cms/store/user/ahortian/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/WJets13Tev_amcnlo_Syst/170124_034044/0000/ DataW_AMCNLO
+(^for above file, currently run doWhat=52)
 cd -
  
 -- Ready to run the code!!! 
 
 -- Run the code under /WJets
-root -b -q runDYJets.cc++
+
+root -b -q wjets_compileCode.cc
+root -b -q runDYJets.cc++ (remember to make the edits at beginning)
+or ---
+python wjets_jobsub.py
