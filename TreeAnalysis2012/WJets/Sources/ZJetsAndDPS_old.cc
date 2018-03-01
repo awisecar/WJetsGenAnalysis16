@@ -394,32 +394,16 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 		//--- https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#76X_Recommendations_and_Recipes
 		//===================================//
 		bool passMETFILTER(true);
-		bool EvtFilterbadChCandidate(true);
-		bool EvtFilterbadPFMuon(true);
-
-		if (hasRecoInfo && isData && doMETFiltering){
+		if (hasRecoInfo && doMETFiltering){
+			//cout << " " << TrigMET << " " << (TrigMET & 1LL<<0) << " " << (TrigMET & 1LL<<1) << " " << (TrigMET & 1LL<<4) << " " << (TrigMET & 1LL<<7) << " " << (TrigMET & 1LL<<9) << " " << (TrigMET & 1LL<<10) << endl;
 			passMETFILTER = (
-				(TrigMETBit & 1LL<<3)
-                                && (TrigMETBit & 1LL<<4)
-                                && (TrigMETBit & 1LL<<8)
-                                && (TrigMETBit & 1LL<<12)
-                                && (TrigMETBit & 1LL<<14)
-                                && (TrigMETBit & 1LL<<15)
-                                && (EvtFilterbadChCandidate)
-                                && (EvtFilterbadPFMuon)
-			);
-			if (passMETFILTER) nEventsPassMETFilter++ ;
-		}
-		if (hasRecoInfo && !isData && doMETFiltering){
-			passMETFILTER = (
-				(TrigMETBit & 1LL<<3)
-				&& (TrigMETBit & 1LL<<4) 
-				&& (TrigMETBit & 1LL<<8)
-				&& (TrigMETBit & 1LL<<12)
-				&& (TrigMETBit & 1LL<<14)
-				&& (EvtFilterbadChCandidate)
-				&& (EvtFilterbadPFMuon)
-			);
+							    (TrigMET & 1LL<<0)   // Flag_HBHENoiseFilter
+							 && (TrigMET & 1LL<<1)   // Flag_HBHENoiseIsoFilter
+							 && (TrigMET & 1LL<<4)   // Flag_CSCTightHalo2015Filter
+							 && (TrigMET & 1LL<<7)   // Flag_EcalDeadCellTriggerPrimitiveFilter
+							 && (TrigMET & 1LL<<9)   // Flag_goodVertices
+							 && (TrigMET & 1LL<<10)  // Flag_eeBadScFilter
+							 );
 			if (passMETFILTER) nEventsPassMETFilter++ ;
 		}
 		//=======================================================================================================//
@@ -835,227 +819,6 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 //if (JetAk04BTagCsv->at(i) >= 0.679) passBJets = true;
                 //if (JetAk04BDiscCisvV2->at(i) >= 0.890) passBJets = true; //for 13 TeV Btag POG recommended discriminator with medium wp cut
                 if (JetAk04BDiscCisvV2->at(i) >= 0.800) passBJets = true; //76x for 13 TeV Btag POG recommended discriminator with medium wp cut
-        
-                //************************* B-tag Veto Correction *******************************//
-                float this_rand = RandGen->Rndm(); // Get a random number.
-                float pt= JetAk04Pt->at(i);
-                float eta= JetAk04Eta->at(i);
-                //float x = 0.890;     ///discrim_cut;
-                // --------- MC-only
-                if (isData == false){
-                    
-                    bool passBJets_SFB_sys_up = passBJets;     // Initialize the systematic_up as the central value
-                    bool passBJets_SFB_sys_down = passBJets; // Initialize the systematic_down as the central value
-                    
-                    int jetflavour= JetAk04HadFlav->at(i);
-                    //cout << " i: " << i << " jetflavour: " << jetflavour << " pt: " << pt << endl;
-                    
-                    if (abs(jetflavour)==5){
-                        float effb = 0.67298;
-                        float effb_corr = 1;
-                        //if (fileName.find("WJets") != string::npos && fileName.find("SMu_") != string::npos) {
-                        if (false) {
-                        }
-                        else{
-                            if (pt < 30.)                 effb = 0.67298  * effb_corr;
-                            if (pt >= 30.  && pt < 50.)   effb = 0.67298  * effb_corr;
-                            if (pt >= 50.  && pt < 70.)   effb = 0.70732  * effb_corr;
-                            if (pt >= 70.  && pt < 100.)  effb = 0.715349 * effb_corr;
-                            if (pt >= 100. && pt < 140.)  effb = 0.712663 * effb_corr;
-                            if (pt >= 140. && pt < 200.)  effb = 0.694916 * effb_corr;
-                            if (pt >= 200. && pt < 300.)  effb = 0.667261 * effb_corr;
-                            if (pt >= 300. && pt < 600.)  effb = 0.607964 * effb_corr;
-                            if (pt >= 600. && pt < 1000.) effb = 0.489927 * effb_corr;
-                            if (pt >= 1000.)              effb = 0.489927 * effb_corr;
-                        }
-                        
-                        //--- CSVv2_Moriond17_B_H.csv values (run period independent)
-                        float           SFb = 0.561694*((1.+(0.31439*pt))/(1.+(0.17756*pt)));
-                        if (pt < 20.)   SFb = 0.561694*((1.+(0.31439*20))/(1.+(0.17756*20)));
-                        if (pt > 1000.) SFb = 0.561694*((1.+(0.31439*1000))/(1.+(0.17756*1000)));
-                        
-                        float SFb_error = 0.0;
-                        if (pt < 20.)                 SFb_error = 0.040213499218225479*2.;
-                        if (pt >= 20.  && pt < 30.)   SFb_error = 0.040213499218225479;
-                        if (pt >= 30.  && pt < 50.)   SFb_error = 0.014046305790543556;
-                        if (pt >= 50.  && pt < 70.)   SFb_error = 0.012372690252959728;
-                        if (pt >= 70.  && pt < 100.)  SFb_error = 0.012274007312953472;
-                        if (pt >= 100. && pt < 140.)  SFb_error = 0.011465910822153091;
-                        if (pt >= 140. && pt < 200.)  SFb_error = 0.012079551815986633;
-                        if (pt >= 200. && pt < 300.)  SFb_error = 0.014995276927947998;
-                        if (pt >= 300. && pt < 600.)  SFb_error = 0.021414462476968765;
-                        if (pt >= 600. && pt < 1000.) SFb_error = 0.032377112656831741;
-                        if (pt >= 1000.)              SFb_error = 0.032377112656831741*2.;
-                        
-                        float SFb_up = SFb + SFb_error;
-                        float SFb_down = SFb - SFb_error;
-                        
-                        // F values for rand comparison
-                        float f = 0.0;
-                        float f_up = 0.0;
-                        float f_down = 0.0;
-                        
-                        if (SFb <1.0) f = (1.0 - SFb);
-                        if (SFb_up <1.0) f_up = (1.0 - SFb_up);
-                        if (SFb_down <1.0) f_down = (1.0 - SFb_down);
-                        
-                        if (SFb > 1.0) f = (1.0 - SFb)/(1.0 - 1.0/effb);
-                        if (SFb_up > 1.0) f_up = (1.0 - SFb_up)/(1.0 - 1.0/effb);
-                        if (SFb_down > 1.0) f_down = (1.0 - SFb_down)/(1.0 - 1.0/effb);
-                        
-                        passBJets_SFB_sys_up = passBJets;     // Initialize the systematic_up as the central value
-                        passBJets_SFB_sys_down = passBJets; // Initialize the systematic_down as the central value
-                        
-                        // Untag a tagged jet
-                        if ((passBJets==true) && (SFb<1.0) && (this_rand < f)) passBJets = false; // for central value
-                        if ((passBJets_SFB_sys_up==true)   && (SFb_up<1.0) && (this_rand < f_up))   passBJets_SFB_sys_up = false; // for systematic_up
-                        if ((passBJets_SFB_sys_down==true) && (SFb_down<1.0) && (this_rand < f_down)) passBJets_SFB_sys_down = false; // for sytematic_down
-                        
-                        
-                        // Tag an untagged jet
-                        if ((passBJets==false) && (SFb>1.0) && (this_rand < f)) passBJets = true; // for central value
-                        if ((passBJets_SFB_sys_up==false)   && (SFb_up>1.0) && (this_rand < f_up))   passBJets_SFB_sys_up = true; // for systematic_up
-                        if ((passBJets_SFB_sys_down==false) && (SFb_down>1.0) && (this_rand < f_down)) passBJets_SFB_sys_down = true; // for sytematic_down
-                        
-                    }
-                    
-                    // ---------------- For Real C-jets--------------- //
-                    if (abs(jetflavour)==4){
-                        float effc = 0.185922;
-                        float effc_corr = 1;
-                        //if (fileName.find("WJets") != string::npos && fileName.find("SMu_") != string::npos){
-                        if (false) {
-                        }
-                        else{
-                            if (pt < 30.)                 effc = 0.185922 * effc_corr;
-                            if (pt >= 30.  && pt < 50.)   effc = 0.185922 * effc_corr;
-                            if (pt >= 50.  && pt < 70.)   effc = 0.182578 * effc_corr;
-                            if (pt >= 70.  && pt < 100.)  effc = 0.18893 * effc_corr;
-                            if (pt >= 100. && pt < 140.)  effc = 0.189251 * effc_corr;
-                            if (pt >= 140. && pt < 200.)  effc = 0.186575 * effc_corr;
-                            if (pt >= 200. && pt < 300.)  effc = 0.194419 * effc_corr;
-                            if (pt >= 300. && pt < 600.)  effc = 0.171999 * effc_corr;
-                            if (pt >= 600. && pt < 1000.) effc = 0.143033 * effc_corr;
-                            if (pt >= 1000.)              effc = 0.143033 * effc_corr;
-                        }
-                        
-                        //--- CSVv2_Moriond17_B_H.csv values (run period independent)
-                        float           SFc = 0.561694*((1.+(0.31439*pt))/(1.+(0.17756*pt)));
-                        if (pt < 20.)   SFc = 0.561694*((1.+(0.31439*20))/(1.+(0.17756*20)));
-                        if (pt > 1000.) SFc = 0.561694*((1.+(0.31439*1000))/(1.+(0.17756*1000)));
-                        
-                        float SFc_error = 0.0;
-                        if (pt < 20.)                 SFc_error = 0.12064050137996674*2.;
-                        if (pt >= 20.  && pt < 30.)   SFc_error = 0.12064050137996674;
-                        if (pt >= 30.  && pt < 50.)   SFc_error = 0.042138919234275818;
-                        if (pt >= 50.  && pt < 70.)   SFc_error = 0.03711806982755661;
-                        if (pt >= 70.  && pt < 100.)  SFc_error = 0.036822021007537842;
-                        if (pt >= 100. && pt < 140.)  SFc_error = 0.034397732466459274;
-                        if (pt >= 140. && pt < 200.)  SFc_error = 0.0362386554479599;
-                        if (pt >= 200. && pt < 300.)  SFc_error = 0.044985830783843994;
-                        if (pt >= 300. && pt < 600.)  SFc_error = 0.064243391156196594;
-                        if (pt >= 600. && pt < 1000.) SFc_error = 0.097131341695785522;
-                        if (pt >= 1000.)              SFc_error = 0.097131341695785522*2.;
-                        
-                        float SFc_up = SFc + SFc_error;
-                        float SFc_down = SFc - SFc_error;
-                        
-                        // F values for rand comparison
-                        float f = 0.0;
-                        float f_up = 0.0;
-                        float f_down = 0.0;
-                        
-                        if (SFc <1.0) f = (1.0 - SFc);
-                        if (SFc_up <1.0) f_up = (1.0 - SFc_up);
-                        if (SFc_down <1.0) f_down = (1.0 - SFc_down);
-                        
-                        if (SFc > 1.0) f = (1.0 - SFc)/(1.0 - 1.0/effc);
-                        if (SFc_up > 1.0) f_up = (1.0 - SFc_up)/(1.0 - 1.0/effc);
-                        if (SFc_down > 1.0) f_down = (1.0 - SFc_down)/(1.0 - 1.0/effc);
-                        
-                        passBJets_SFB_sys_up = passBJets;     // Initialize the systematic_up as the central value
-                        passBJets_SFB_sys_down = passBJets; // Initialize the systematic_down as the central value
-                        
-                        // Untag a tagged jet
-                        if ((passBJets==true) && (SFc<1.0) && (this_rand < f)) passBJets = false; // for central value
-                        if ((passBJets_SFB_sys_up==true)   && (SFc_up<1.0) && (this_rand < f_up))   passBJets_SFB_sys_up = false; // for systematic_up
-                        if ((passBJets_SFB_sys_down==true) && (SFc_down<1.0) && (this_rand < f_down)) passBJets_SFB_sys_down = false; // for sytematic_down
-                        
-                        // Tag an untagged jet
-                        if ((passBJets==false) && (SFc>1.0) && (this_rand < f)) passBJets = true; // for central value
-                        if ((passBJets_SFB_sys_up==false)   && (SFc_up>1.0) && (this_rand < f_up))   passBJets_SFB_sys_up = true; // for systematic_up
-                        if ((passBJets_SFB_sys_down==false) && (SFc_down>1.0) && (this_rand < f_down)) passBJets_SFB_sys_down = true; // for sytematic_down
-                        
-                    }
-                    
-                    // ---------------- For REAL Light-jets --------------- //
-                    if (abs(jetflavour)<4){
-                        float eff_l = 0.0200484;
-                        float eff_l_corr = 1;
-                        //if (fileName.find("WJets") != string::npos && fileName.find("SMu_") != string::npos){
-                        if (false) {
-                        }
-                        else{
-                            if (pt < 30.)                 eff_l = 0.0200484 * eff_l_corr;
-                            if (pt >= 30.  && pt < 50.)   eff_l = 0.0200484 * eff_l_corr;
-                            if (pt >= 50.  && pt < 70.)   eff_l = 0.0171176 * eff_l_corr;
-                            if (pt >= 70.  && pt < 100.)  eff_l = 0.0158081 * eff_l_corr;
-                            if (pt >= 100. && pt < 140.)  eff_l = 0.0155987 * eff_l_corr;
-                            if (pt >= 140. && pt < 200.)  eff_l = 0.0211239 * eff_l_corr;
-                            if (pt >= 200. && pt < 300.)  eff_l = 0.0223319 * eff_l_corr;
-                            if (pt >= 300. && pt < 600.)  eff_l = 0.030051  * eff_l_corr;
-                            if (pt >= 600. && pt < 1000.) eff_l = 0.0427809 * eff_l_corr;
-                            if (pt >= 1000.)              eff_l = 0.0427809 * eff_l_corr;
-                        }
-                        
-                        //--- CSVv2_Moriond17_B_H.csv values (run period independent)
-                        float           SFlight = 1.0589+(0.000382569*pt)+(-2.4252e-07*(pt*pt))+(2.20966e-10*(pt*pt*pt));
-                        if (pt < 20.)   SFlight = 1.0589+(0.000382569*20)+(-2.4252e-07*(20*20))+(2.20966e-10*(20*20*20));
-                        if (pt > 1000.) SFlight = 1.0589+(0.000382569*1000)+(-2.4252e-07*(1000*1000))+(2.20966e-10*(1000*1000*1000));
-                        
-                        float           SFlight_up = SFlight * (1+(0.100485+(3.95509e-05*pt)+(-4.90326e-08*(pt*pt))));
-                        if (pt < 20.)   SFlight_up = SFlight * (1+(2*(0.100485+(3.95509e-05*20)+(-4.90326e-08*(20*20)))));
-                        if (pt > 1000.) SFlight_up = SFlight * (1+(2*(0.100485+(3.95509e-05*1000)+(-4.90326e-08*(1000*1000)))));
-                        
-                        float           SFlight_down = SFlight * (1-(0.100485+(3.95509e-05*pt)+(-4.90326e-08*(pt*pt))));
-                        if (pt < 20.)   SFlight_down = SFlight * (1-(2*(0.100485+(3.95509e-05*20)+(-4.90326e-08*(20*20)))));
-                        if (pt > 1000.) SFlight_down = SFlight * (1-(2*(0.100485+(3.95509e-05*1000)+(-4.90326e-08*(1000*1000)))));
-                        
-                        // F values for rand comparison
-                        float f = 0.0;
-                        float f_up = 0.0;
-                        float f_down = 0.0;
-                        
-                        if (SFlight <1.0) f = (1.0 - SFlight);
-                        if (SFlight_up <1.0) f_up = (1.0 - SFlight_up);
-                        if (SFlight_down <1.0) f_down = (1.0 - SFlight_down);
-                        
-                        if (SFlight > 1.0) f = (1.0 - SFlight)/(1.0 - 1.0/eff_l);
-                        if (SFlight_up > 1.0) f_up = (1.0 - SFlight_up)/(1.0 - 1.0/eff_l);
-                        if (SFlight_down > 1.0) f_down = (1.0 - SFlight_down)/(1.0 - 1.0/eff_l);
-                        
-                        passBJets_SFB_sys_up = passBJets;     // Initialize the systematic_up as the central value
-                        passBJets_SFB_sys_down = passBJets; // Initialize the systematic_down as the central value
-                        
-                        // Untag a tagged jet
-                        if ((passBJets==true) && (SFlight<1.0) && (this_rand < f)) passBJets = false; // for central value
-                        if ((passBJets_SFB_sys_up==true)   && (SFlight_up<1.0) && (this_rand < f_up))   passBJets_SFB_sys_up = false; // for systematic_up
-                        if ((passBJets_SFB_sys_down==true) && (SFlight_down<1.0) && (this_rand < f_down)) passBJets_SFB_sys_down = false; // for sytematic_down
-                        
-                        // Tag an untagged jet
-                        if ((passBJets==false) && (SFlight>1.0) && (this_rand < f)) passBJets = true; // for central value
-                        if ((passBJets_SFB_sys_up==false)   && (SFlight_up>1.0) && (this_rand < f_up))   passBJets_SFB_sys_up = true; // for systematic_up
-                        if ((passBJets_SFB_sys_down==false) && (SFlight_down>1.0) && (this_rand < f_down)) passBJets_SFB_sys_down = true; // for sytematic_down
-                    }   ////////flavour lop
-                    
-                    if (sysBtagSF ==  1) passBJets = passBJets_SFB_sys_up;
-                    if (sysBtagSF == -1) passBJets = passBJets_SFB_sys_down;
-                    
-                    // Wb study
-                    if (abs(jetflavour)==5) countWbBjets++ ;
-                }
-                // --------- End MC-only
-                //************************* End B-tag Veto Correction *******************************//
 
                
                 jetStruct jet = {JetAk04Pt->at(i), JetAk04Eta->at(i), JetAk04Phi->at(i), JetAk04E->at(i), i, passBJets, 0, 0};
@@ -3949,7 +3712,7 @@ void ZJetsAndDPS::Init(bool hasRecoInfo, bool hasGenInfo, bool hasPartonInfo){
 
     // Set object pointer
     
-    std::cout << "\nZJetsAndDPS::Init() start" << std::endl;
+    std::cout << "\nZJetsAndDPS::Init start" << std::endl;
 
     EvtWeights = 0;
     mcSherpaWeights_ = 0 ;
@@ -4040,9 +3803,6 @@ void ZJetsAndDPS::Init(bool hasRecoInfo, bool hasGenInfo, bool hasPartonInfo){
     METPz = 0 ;
     METE = 0 ;
     TrigMET = 0;
-    TrigMETBit = 0;
-    EvtFilterbadChCandidate = 0;
-    EvtFilterbadPFMuon = 0;
     //koMETPhi = 0 ;
     //METsig = 0 ;
     //HBHENoiseFilterFlag = 0;
@@ -4086,9 +3846,6 @@ void ZJetsAndDPS::Init(bool hasRecoInfo, bool hasGenInfo, bool hasPartonInfo){
         fChain->SetBranchAddress("METPz", &METPz, &b_METPz);
         fChain->SetBranchAddress("METE", &METE, &b_METE);
         fChain->SetBranchAddress("TrigMET", &TrigMET, &b_TrigMET);
-        fChain->SetBranchAddress("TrigMETBit", &TrigMETBit, &b_TrigMETBit);
-        fChain->SetBranchAddress("EvtFilterbadChCandidate", &EvtFilterbadChCandidate, &b_EvtFilterbadChCandidate);
-        fChain->SetBranchAddress("EvtFilterbadPFMuon", &EvtFilterbadPFMuon, &b_EvtFilterbadPFMuon);
         //KOfChain->SetBranchAddress("METPhi", &METPhi, &b_METPhi);
         //fChain->SetBranchAddress("METsig", &METsig, &b_METsig); // not used
         //fChain->SetBranchAddress("HBHENoiseFilterFlag", &HBHENoiseFilterFlag, &b_HBHENoiseFilterFlag);
