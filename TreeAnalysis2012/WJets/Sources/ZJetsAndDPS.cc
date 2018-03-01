@@ -35,6 +35,8 @@ ClassImp(ZJetsAndDPS);
 void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSign, bool doInvMassCut, 
         int doBJets, int doPUStudy, bool doFlat, bool useRoch, bool doVarWidth,  bool hasPartonInfo, string pdfSet, int pdfMember)
 {
+        std::cout << "\nZJetsAndDPS::Loop() start" << std::endl;
+
 	bool doMETFiltering = true;
 
     //--- Initialize PDF from LHAPDF if needed ---
@@ -335,7 +337,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
             sumSherpaW += mcSherpaWeights_->at(4);
         } */
 		if (DEBUG) cout << " mcEventWeight_->size() "<< mcEventWeight_->size() << endl;
-		if (fileName.find("gen_amcNLO") != string::npos) {
+		if ((fileName.find("gen_amcNLO") != string::npos) || (fileName.find("as_") != string::npos)) {
 			//weight *= mcEventWeight_->at(0);
 			sum_amcNLO_W += mcEventWeight_->at(0);
 			sum_amcNLO_1 += mcEventWeight_->at(1);
@@ -3729,7 +3731,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
         if (hasRecoInfo && !isData){
             if (sumEventW > 0) listOfHistograms[i]->Scale(skimAccep_[0]/sumEventW);
         }
-		if (fileName.find("gen_amcNLO") != string::npos){
+		if ((fileName.find("gen_amcNLO") != string::npos) || (fileName.find("as_") != string::npos)){
 			//if (sum_amcNLO_W > 0) listOfHistograms[i]->Scale(1/sum_amcNLO_W);
 			if (allSampEvtWSums[0] > 0) listOfHistograms[i]->Scale(1/allSampEvtWSums[0]);
 		}
@@ -3805,7 +3807,7 @@ ZJetsAndDPS::ZJetsAndDPS(string fileName_, float lumiScale_, float puScale_, boo
     fileName(fileName_), lumiScale(lumiScale_), puScale(puScale_), useTriggerCorrection(useTriggerCorrection_), useEfficiencyCorrection(useEfficiencyCorrection_), 
     systematics(systematics_), direction(direction_), xsecfactor(xsecfactor_), jetPtCutMin(jetPtCutMin_), jetPtCutMax(jetPtCutMax_), jetEtaCutMin(jetEtaCutMin_), jetEtaCutMax(jetEtaCutMax_), ZPtCutMin(ZPtCutMin_), ZEtaCutMin(ZEtaCutMin_), ZEtaCutMax(ZEtaCutMax_), METcut(METcut_)
 {
-
+    std::cout << "\nZJetsAndDPS::ZJetsAndDPS() start" << std::endl;
     // if parameter tree is not specified (or zero), connect the file
     // used to generate this class and read the Tree.
 
@@ -3815,11 +3817,12 @@ ZJetsAndDPS::ZJetsAndDPS(string fileName_, float lumiScale_, float puScale_, boo
     isData = false;
     string fullFileName =  "../Data_Z_5311_New/" + fileName;
     
-    string storageElement = "root://eoscms//eos/cms";
+    //string storageElement = "root://eoscms//eos/cms";
+    string storageElement = "/eos/cms";
     string dirPath = "/tupel";
     string treeName = "/EventTree";
 
-
+    //Leptonic signal/process we're looking at
     if (fileName.find("DMu_") == 0) leptonFlavor = "Muons";
     else if (fileName.find("DE_") == 0)  leptonFlavor = "Electrons"; 
     else if (fileName.find("SMu_") == 0) leptonFlavor = "SingleMuon";
@@ -3828,12 +3831,17 @@ ZJetsAndDPS::ZJetsAndDPS(string fileName_, float lumiScale_, float puScale_, boo
         leptonFlavor = "TTMuE";
         fullFileName =  "../DataTTbarEMu/" + fileName;
     }
+
     if (fileName.find("Data") != string::npos ) isData = true;
     if ( fileName.find("SMu_") == 0 || fileName.find("SE_") == 0 ) fullFileName =  "DataW_txt/" + fileName;
     //if ( fileName.find("SMu_") == 0 || fileName.find("SE_") == 0 ) fullFileName =  "/afs/cern.ch/work/o/ocalan/" + fileName;
     //if ( fileName.find("SMu_") == 0 || fileName.find("SE_") == 0 ) fullFileName =  "/afs/cern.ch/user/o/ocalan/13TeV/CMSSW_5_3_11/src/WJETS/TreeAnalysis2012/DataW/" + fileName;
     if (fileName.find("Sherpa2") != string::npos) fullFileName =  "../DataSherpa2/" + fileName;
-	if (fileName.find("gen_amcNLO") != string::npos) fullFileName =  "../DataW_AMCNLO/" + fileName;
+    if (fileName.find("gen_amcNLO") != string::npos) fullFileName =  "../DataW_AMCNLO/" + fileName;
+    //andrew -- "as_" are the alpha-s variations
+    if (fileName.find("as_") != string::npos) fullFileName =  "DataW_alpha-s/" + fileName;
+
+    //if "List" is not found in fileName
     if (fileName.find("List") == string::npos){
         if (fileName.find("Sherpa2") != string::npos){
             fullFileName += ".root";
@@ -3841,19 +3849,26 @@ ZJetsAndDPS::ZJetsAndDPS(string fileName_, float lumiScale_, float puScale_, boo
             cout << "Loading file: " << fullFileName << endl;
             chain->Add(treePath.c_str());
         }
-		else if (fileName.find("gen_amcNLO") != string::npos){
-			fullFileName += ".root";
-			string treePath = fullFileName + "/demo/EventTree";
-			cout << "Loading file: " << fullFileName << endl;
-			chain->Add(treePath.c_str());
-		}
-        else{
-            fullFileName += ".root";
-            string treePath = fullFileName + "/tupel/EventTree";
-            cout << "Loading file: " << fullFileName << endl;
-            chain->Add(treePath.c_str());
+	else if (fileName.find("gen_amcNLO") != string::npos){
+		fullFileName += ".root";
+		string treePath = fullFileName + "/demo/EventTree";
+		cout << "Loading file: " << fullFileName << endl;
+		chain->Add(treePath.c_str());
+	}
+        else if (fileName.find("as_") != string::npos) {
+                fullFileName += ".root";
+                string treePath = fullFileName + "/demo/EventTree";
+                cout << "Loading file: " << fullFileName << endl;
+                chain->Add(treePath.c_str());
+        }
+        else {
+                fullFileName += ".root";
+                string treePath = fullFileName + "/tupel/EventTree";
+                cout << "Loading file: " << fullFileName << endl;
+                chain->Add(treePath.c_str());
         }
     }
+    //the case where "List" is in fileName
     else {
         fullFileName += ".txt";
         ifstream infile(fullFileName.c_str());
@@ -3862,38 +3877,53 @@ ZJetsAndDPS::ZJetsAndDPS(string fileName_, float lumiScale_, float puScale_, boo
         while (getline(infile, line)){
             countFiles++;
             //string treePath =  line + "/tree/tree";
-			string treePath;
-			string bonzaiHeaderPath;
-			if (fileName.find("gen_amcNLO") != string::npos){
-				treePath =  "../DataW_AMCNLO/" + line + "/demo/EventTree";
-				cout << "Loading treePath: " << treePath << endl;
-				chain->Add(treePath.c_str());
-				//cout << "Loading file: " << line << endl;
-			}
-			else{
-				treePath = storageElement + line + dirPath + treeName;
-				cout << "Loading treePath: " << treePath << endl;
-				chain->Add(treePath.c_str());
-				//cout << "Loading file: " << line << endl;
+	    string treePath;
+	    string bonzaiHeaderPath;
+	    if (fileName.find("gen_amcNLO") != string::npos){
+		treePath =  "../DataW_AMCNLO/" + line + "/demo/EventTree";
+		cout << "Loading treePath: " << treePath << endl;
+		chain->Add(treePath.c_str());
+		//cout << "Loading file: " << line << endl;
+	    }
+            //"as_" is the alpha-s variations
+            else if (fileName.find("as_") != string::npos) {
+                //treePath =  "DataW_alpha-s/" + line + "/demo/EventTree";
+                treePath = storageElement + line + "/demo/EventTree";
+                cout << "Loading treePath: " << treePath << endl;
+                chain->Add(treePath.c_str());
+                //cout << "Loading file: " << line << endl;
+            }
+	    else {
+		treePath = storageElement + line + dirPath + treeName;
+		cout << "Loading treePath: " << treePath << endl;
+		chain->Add(treePath.c_str());
+		//cout << "Loading file: " << line << endl;
 				
-				bonzaiHeaderPath = storageElement + line + dirPath + "/BonzaiHeader";
-				cout << "Loading bonzaiHeaderPath: " << bonzaiHeaderPath << endl;
-				BonzaiHeaderChain->Add(bonzaiHeaderPath.c_str());
-			}
+		bonzaiHeaderPath = storageElement + line + dirPath + "/BonzaiHeader";
+		cout << "Loading bonzaiHeaderPath: " << bonzaiHeaderPath << endl;
+		BonzaiHeaderChain->Add(bonzaiHeaderPath.c_str());
+	    }
         }
     }
     fChain = chain;
     fBonzaiHeaderChain = BonzaiHeaderChain;
 	
-	if (fileName.find("gen_amcNLO") != string::npos) {
-		getMcNorm_amcNLO(fileName);
-		cout << " allSampEvtWSums[0] " << allSampEvtWSums[0] << endl;
-		cout << " countAllSamp " << countAllSamp[0] << " " << countAllSamp[1] << endl;
-		cout << " countAllBonz " << countAllBonz[0] << " " << countAllBonz[1] << endl;
+    //do getMcNorm_amcNLO on files with just GEN(?)
+    if (fileName.find("gen_amcNLO") != string::npos || fileName.find("as_") != string::npos) {
+        getMcNorm_amcNLO(fileName, storageElement);
+	cout << " allSampEvtWSums[0] " << allSampEvtWSums[0] << endl;
+	cout << " countAllSamp " << countAllSamp[0] << " " << countAllSamp[1] << endl;
+	cout << " countAllBonz " << countAllBonz[0] << " " << countAllBonz[1] << endl;
 	}
 	
-    if (!isData && !(fileName.find("gen_amcNLO") != string::npos)) getMcNorm();
-    else skimAccep_ = std::vector<double>(1, 1.);
+
+ //   //do getMcNorm() on files with GEN info that are not files that just contain GEN
+ //   if ((!isData && !(fileName.find("gen_amcNLO") != string::npos)) || (!isData && !(fileName.find("as_") != string::npos))) getMcNorm();
+ //   //else, reco
+ //   else skimAccep_ = std::vector<double>(1, 1.);
+ 
+ //   andrew -- skimAccep only matters for files w/ both gen and reco(?), so try this line
+    skimAccep_ = std::vector<double>(1, 1.);
 }
 
 ZJetsAndDPS::~ZJetsAndDPS(){
@@ -3966,6 +3996,8 @@ void ZJetsAndDPS::Init(bool hasRecoInfo, bool hasGenInfo, bool hasPartonInfo){
 
     // Set object pointer
     
+    std::cout << "\nZJetsAndDPS::Init start" << std::endl;
+
     EvtWeights = 0;
     mcSherpaWeights_ = 0 ;
     
@@ -4152,7 +4184,8 @@ void ZJetsAndDPS::Init(bool hasRecoInfo, bool hasGenInfo, bool hasPartonInfo){
                 fileName.find("P8") != string::npos || 
                 fileName.find("TopReweighting") != string::npos ||
                 fileName.find("Z2") != string::npos ||
-				fileName.find("gen_amcNLO") != string::npos
+		fileName.find("gen_amcNLO") != string::npos ||
+                fileName.find("as_") != string::npos
 			){
 
             //fChain->SetBranchAddress("pdfInfo_", &pdfInfo_, &b_pdfInfo_);
@@ -4188,7 +4221,7 @@ void ZJetsAndDPS::Init(bool hasRecoInfo, bool hasGenInfo, bool hasPartonInfo){
             if (fileName.find("Sherpa2") != string::npos){
                 fChain->SetBranchAddress("mcSherpaWeights_", &mcSherpaWeights_, &b_mcSherpaWeights_);
             }
-			if (fileName.find("gen_amcNLO") != string::npos){
+			if ((fileName.find("gen_amcNLO") != string::npos) || (fileName.find("as_") != string::npos) ){
 				fChain->SetBranchAddress("mcEventWeight_", &mcEventWeight_, &b_mcEventWeight_);
 			}
 
@@ -4306,10 +4339,16 @@ void ZJetsAndDPS::getMcNorm(){
     //    delete EvtWeightSums;
 }
 
-void ZJetsAndDPS::getMcNorm_amcNLO(string inFile_Name){
+void ZJetsAndDPS::getMcNorm_amcNLO(string inFile_Name, string storageElement){
 	
 	//double * allBonzEvtWSums[109] ;
-	string fullFileName = "../DataW_AMCNLO/" + inFile_Name;
+	string fullFileName;
+	if (fileName.find("gen_amcNLO") != string::npos) {
+             fullFileName = "../DataW_AMCNLO/" + inFile_Name;
+        }
+        else { 
+             fullFileName = "DataW_alpha-s/" + inFile_Name; 
+        }
 	//string fullFileName = "../DataW/" + inFile_Name;
 	fullFileName += ".txt";
 	std::ifstream ifs;
@@ -4324,7 +4363,9 @@ void ZJetsAndDPS::getMcNorm_amcNLO(string inFile_Name){
 
 		countFiles++;
 		cout <<  " --- " << line << endl;
-		TFile * f = new TFile(("../DataW_AMCNLO/" + line).c_str());
+		//TFile * f = new TFile(("../DataW_AMCNLO/" + line).c_str());
+		//for alpha-s
+                TFile * f = new TFile((storageElement + line).c_str());
 		//TFile * f = new TFile(("../DataW/" + line).c_str());
 		f->cd("demo");
 		inHist = (TH1D*)f->Get("demo/hWeights_1001");

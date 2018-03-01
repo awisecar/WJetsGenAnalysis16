@@ -1,0 +1,1 @@
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_1j_as_0124/wjets_amcnlo_gen_1j_as0124_1.root

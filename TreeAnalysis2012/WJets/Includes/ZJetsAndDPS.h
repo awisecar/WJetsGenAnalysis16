@@ -289,7 +289,7 @@ class ZJetsAndDPS: public HistoSet {
 	double allBonzEvtWSums[109] ;
 	double countAllSamp[2] ;
 	double countAllBonz[2] ;
-	void getMcNorm_amcNLO(string inFile_Name = "");
+	void getMcNorm_amcNLO(string inFile_Name = "", string storageElement = "");
 	
     Int_t InEvtCount_;
     Int_t EvtCount_;

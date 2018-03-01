@@ -5,13 +5,17 @@ import random
 import time
 import datetime
 
+cwd = os.getcwd()
+print 'Current working directory: ' + cwd + '\n'
+
 os.system('root -b -q wjets_compileCode.cc')
 
 dateTo = datetime.datetime.now().strftime("%Y_%m_%d_%H%M%S")
 mtmpdir = 'wjetsjobsGEN_' + dateTo
 os.system('mkdir ' + mtmpdir)
 
-doWhat = [10, 11, 12, 13, 14, 15, 16, 17, 52]
+#doWhat = [10, 11, 12, 13, 14, 15, 16, 17, 52]
+doWhat = [10, 17]
 doQCD = [0]
 doSysRunning = [0]
 
@@ -25,7 +29,8 @@ for what in doWhat:
 			tjobname = mtmpdir+'/job_' + 'do' + str(what) + '_QCD' + str(QCD) + '_Sys' + str(sys) + '.sh'
 
 			job = '#!/bin/bash\n'
-     	 	        job += 'cd /afs/cern.ch/user/a/awisecar/WJetsGenAnalysis16/CMSSW_5_3_20/src/WJetsGenAnalysis16/TreeAnalysis2012/WJets\n'
+                        job += 'cd ' + cwd + ' \n'
+     	 	        #job += 'cd /afs/cern.ch/user/a/awisecar/WJetsGenAnalysis16/CMSSW_5_3_20/src/WJetsGenAnalysis16/TreeAnalysis2012/WJets\n'
 			job += 'eval `scramv1 runtime -sh`'
 		
 			com = 'root -b -q runDYJets.cc\(' + str(what) + ',' + str(QCD) + ',' + str(sys) + '\) 2>&1'

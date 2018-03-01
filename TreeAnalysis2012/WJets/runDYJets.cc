@@ -1,4 +1,4 @@
-void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
+//void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
 {
     string srcdir = "Sources/";
 
@@ -20,17 +20,18 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
     }
         
     //------
-    //int doWhat       = 52;    // 52 - W+jets aMC_NLO MC sample
+    int doWhat       = 17;    //just 10, 17 for now ...   
+                              // 52 - W+jets aMC_NLO MC sample
                               // 10, 11, 12, ..., 17 - W+jets NLO FxFx alpha-s variations
                               // 100 - all ; 0 - data, 1 - background , 2 - tau ?, 3 - DY, 4 - W+jets,
                               // 51 - MC gen, 90 - PDF Syst., 1001 - do pull DY samples
         
-    //int doSysRunning = 0;
+    int doSysRunning = 0;
                              // 0 - no syst running, 100 - all systematic runnings,
                              // 1 - PU, 2 - JES, 3 - XSEC, 4 - JER, 5 - LepSF,
                              // 6 - BtagSF, 7 - MES, 8 - MER, 9 - WB, 10 - RESP
         
-    //int doQCD        = 0;
+    int doQCD        = 0;
                              // 0-3 : 4 combination between isolation/anti-isolation and MT cuts
         
     int doBJets      = -1;
@@ -57,8 +58,7 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
     //double muLumi(2299.134164972); //76x data bonzai golden json v2
     //double muLumi(2671.381641216); //76x data bonzai silver json v2
     
-    //andrew - as of 22.02.2018
-    double muLumi(35916.637);
+    double muLumi(35916.637); // 80X 2016 data bonzai 23Sep2016ReReco golden json
 
     double w_sum_WJets(3.73654e+12);
     double w_sum_TTbar(1.15005e+07);
@@ -493,17 +493,5 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
     }
         
         
-        
-    //--- clean the *_cc.d and *_cc.so files ---
-    string cmd = "if ls *_cc.d &> .ls_tmp.list; then rm *_cc.d; fi";
-    system(cmd.c_str());
-    cmd = "if ls *_cc.so &> .ls_tmp.list; then rm *_cc.so; fi";
-    system(cmd.c_str());
-    cmd = "if ls " + srcdir + "*_cc.d &> .ls_tmp.list; then rm " + srcdir + "*_cc.d; fi";
-    system(cmd.c_str());
-    cmd = "if ls " + srcdir + "*_cc.so &> .ls_tmp.list; then rm " + srcdir + "*_cc.so; fi";
-    system(cmd.c_str());
-    system("rm .ls_tmp.list");
-
 }
 
