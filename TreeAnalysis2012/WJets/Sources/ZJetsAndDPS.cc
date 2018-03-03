@@ -63,6 +63,16 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     unsigned int nEventsExcl0Jets(0), nEventsExcl1Jets(0), nEventsExcl2Jets(0), nEventsExcl3Jets(0),nEventsIncBJets(0);
     unsigned int GENnEventsIncl0Jets(0), GENnEventsIncl1Jets(0), GENnEventsIncl2Jets(0), GENnEventsIncl3Jets(0);
     double TotalGenWeight(0.), TotalGenWeightPassGEN(0.), TotalGenWeightPassGENPU(0.), TotalGenWeightPassRECO(0.), TotalRecoWeightPassRECO(0.);
+
+    //andrew debug
+    int npassesGenLepSelector(0);
+    int npassesGenLepBarePrompt(0);
+    int numGenPromptNeutrinos(0);
+    int numGenPromptElectrons(0);
+    int numGenPromptMuons(0);
+    int numHasAtLeastTwoGenLeptons(0);
+    int npassesGenLeptonCut(0);
+    
     //------------------------------------
     if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
     //==========================================================================================================//
@@ -107,6 +117,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     //==========================================================================================================//
     //       Load efficiency tables        //
     //====================================//
+    std::cout << "\n" << std::endl;
     table LeptIso, LeptID, LeptTrig, Ele_Rec;
     table TableJESunc("EfficiencyTables/JECUncertainty_Summer16_23Sep2016V4_AK4PF.txt");
     if (energy == "13TeV"){
@@ -130,9 +141,22 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
         }
     }
     //==========================================================================================================//
-    cout << "Phase space cuts -- jet pt:" << jetPtCutMin <<"  " << jetPtCutMax<<"  -- jet rapidity : " << jetEtaCutMin / 10.0<< "  " << jetEtaCutMax / 10.0<< "  " << "  -- Z eta: " << ZEtaCutMin<<"   " << ZEtaCutMax<< "  -- MET cut: " << METcut << "    "   << endl;
-    cout << " other selections:  " <<endl;
-    cout << " doQCD: " << doQCD <<"  do SS: " << doSSign <<" inv. mass cut: " << doInvMassCut <<"  use MET cut: " << METcut<<"  use B jets: " << doBJets <<" do PU study: " << doPUStudy << endl;
+    cout << "\n--- Phase space cuts ---" << endl;
+    cout << "Jet pt: " << jetPtCutMin <<" to " << jetPtCutMax << endl;
+    cout << "Jet rapidity: " << jetEtaCutMin / 10.0 << " to " << jetEtaCutMax / 10.0 << endl;
+    cout << "Z eta: " << ZEtaCutMin <<" to " << ZEtaCutMax << endl;
+    cout << "MET cut: " << METcut << endl;
+    cout << "MT cut: " << MTCut << endl;
+
+    cout << "\n--- Other selections ---" <<endl;
+    cout << "doQCD: " << doQCD << endl;
+    cout << "doSS: " << doSSign << endl;
+    cout << "Inv. mass cut (not actually utilized in analysis?): " << doInvMassCut << endl;
+    cout << "Use B jets: " << doBJets << endl;
+    cout << "Do PU study: " << doPUStudy << endl;
+   
+    cout << "\ndoW? " << doW << endl;
+    cout << "doZ? " << doZ << endl;
 
 
     if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
@@ -275,10 +299,15 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
    
     //------------------------------------
 
+    std::cout << "hasRecoInfo: " << hasRecoInfo << std::endl;
+    std::cout << "hasGenInfo: " << hasGenInfo << std::endl;
+    std::cout << "hasPartonInfo: " << hasPartonInfo << std::endl;
+    std::cout << "isData: " << isData << std::endl;
+
     cout << " run on " << nentries << " events" << endl;
-    //--- Begin Loop All Entries --
+   //--- Begin Loop All Entries --
    for (Long64_t jentry(0); jentry < nentries; jentry++){
-   //for (Long64_t jentry(0); jentry < 500000; jentry++){
+   //for (Long64_t jentry(0); jentry < 100000; jentry++){
         Long64_t ientry = LoadTree(jentry);
         if (ientry < 0) break;
 
@@ -632,7 +661,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 //                cout << " Id " << GPhotMotherId->at(j) << " GPhotSt " << GPhotSt->at(j) << " pt " << GPhotPt->at(j) << " eta " << GPhotEta->at(j) << " phi " << GPhotPhi->at(j) << endl;
 //            }
             
-            
+            //fetching neutrino ID for corresponding lepton
             if (doW) nuID = 14;
             else if (doW && LeptonID == 11) nuID = 12;
             //-- retriveing generated leptons with status 1
@@ -646,17 +675,27 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 //                // following two lines should give the same result
 //                if (GLepBareSt->at(i) == 3 && abs(GLepBareId->at(i)) != LeptonID && (abs(GLepBareId->at(i)) == 15 || abs(GLepBareId->at(i)) == 13 || abs(GLepBareId->at(i)) == 11)) countTauS3++;
 //                if (GLepBareSt->at(i) == 3 && abs(GLepBareId->at(i)) == LeptonID ) countTauS3--;
-                
+                if (lepSelector) npassesGenLepSelector++;
                 if (!lepSelector) continue ;
-                if (! GLepBarePrompt->at(i)) continue ;
+
+                if (GLepBarePrompt ->at(i)) npassesGenLepBarePrompt++;
+                if (!GLepBarePrompt->at(i)) continue ;
                 
                 
                 //double charge(genLepQ_->at(i));
                 //if (abs(GLepBareId->at(i)) == 12 || abs(GLepBareId->at(i)) == 14 || abs(GLepBareId->at(i)) == 16) charge = 0.;
                 double charge;
-                if (abs(GLepBareId->at(i)) == 12 || abs(GLepBareId->at(i)) == 14 || abs(GLepBareId->at(i)) == 16) charge = 0.;
+                if (abs(GLepBareId->at(i)) == 12 || abs(GLepBareId->at(i)) == 14 || abs(GLepBareId->at(i)) == 16) {
+                    numGenPromptNeutrinos++;
+                    charge = 0.;
+                }
                 else if (GLepBareId->at(i) > 0) charge = -1.;
                 else charge = 1.;
+       
+                if (abs(GLepBareId->at(i)) == 11 || abs(GLepBareId->at(i)) == 13){
+                    if (abs(GLepBareId->at(i)) == 11) numGenPromptElectrons++;
+                    if (abs(GLepBareId->at(i)) == 13) numGenPromptMuons++;
+                }
                 
                 leptonStruct genLep = {GLepBarePt->at(i), GLepBareEta->at(i), GLepBarePhi->at(i), GLepBareE->at(i), charge, 0., 0.};
                 leptonStruct genLepNoFSR = {GLepBarePt->at(i), GLepBareEta->at(i), GLepBarePhi->at(i), GLepBareE->at(i), charge, 0., 0. };
@@ -674,7 +713,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                     && GLepBareSt->at(i) == 1
                     && ( abs(GLepBareId->at(i)) == LeptonID || (charge == 0 && doW) ) )
                  {
-                    // only charged lepton(s) will be dressed
+                    // Dressing of charged leptons
                     if( fabs(genLep.charge) > 0 ){
                         TLorentzVector tmpGenLep;
                         tmpGenLep.SetPtEtaPhiM(genLep.pt, genLep.eta, genLep.phi, leptonMass);
@@ -709,13 +748,14 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                     }
                     
                     //if (doW && ((fabs(genLep.charge) > 0 && genLep.pt >= 25 && fabs(genLep.eta) <= 2.1)||(fabs(genLep.charge) == 0))){
+                    //analysis cut on leptons (both charged and neutrinos) -- W boson
                     if (doW && ((fabs(genLep.charge) > 0 && genLep.pt >= 25 && fabs(genLep.eta) <= 2.4) || (fabs(genLep.charge) == 0 && genLep.pt >= METcut))){
                         genLeptons.push_back(genLep); 
                     }
                 }
             }
             nGenLeptons = genLeptons.size();
-            //cout << " nTotGenLeptons " << nTotGenLeptons <<" nGenLeptons = genLeptons.size()  " << genLeptons.size() << endl;
+            cout << " nTotGenLeptons = " << nTotGenLeptons <<"; nGenLeptons = genLeptons.size() = " << genLeptons.size() << endl;
             
 //            if (countTauS3 == 0 && fileName.find("UNFOLDING") != string::npos){
 //                //partonsN->Fill(nup_-5);
@@ -737,6 +777,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
             //-- determine if the event passes the leptons requirements
             if (nGenLeptons >= 2){
+                numHasAtLeastTwoGenLeptons++;
                 
                 // sort leptons by descending pt
                 sort(genLeptons.begin(), genLeptons.end(), LepDescendingOrder);
@@ -757,7 +798,10 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     }
                     else genMT = -99.0;
                     
-                    if (genMT >= MTCut && genLepton2.pt >= METcut) passesGenLeptonCut = 1;
+                    if (genMT >= MTCut && genLepton2.pt >= METcut) {
+			passesGenLeptonCut = 1;
+			npassesGenLeptonCut++;
+		    }
                 }
 
                 //----- For Z+jets -------
@@ -775,28 +819,29 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                         && genZ.Eta()*100 > ZEtaCutMin && genZ.Eta()*100 < ZEtaCutMax && genZ.Pt()>= ZPtCutMin) {
                     
                     passesGenLeptonCut = 1;
-                }
+                    npassesGenLeptonCut++;
+                }   
                 //----- End For Z+jets -------
-            }
-            
+            }       
+                    
             /// --- if there are taus, but we do not run on the Tau file, thus we run on the WJets file,
             //    then we don't count the event at reco.
             //if (countTauS3 > 0 && fileName.find("Tau") == string::npos) passesLeptonCut = 0 ;
-
+                    
             //--- if there are taus we don't want the gen level
             //if (countTauS3 > 0){
             //    passesGenLeptonCut = 0;
             //    passesGenLeptonReq = 0;
-            //}
-        }
+            //}     
+        }           
         //=======================================================================================================//
-
+                    
 		//cout << " jentry: " << jentry << " nMuons: " << nMuons << " nLeptons: " << nLeptons << " nElectrons: " << nElectrons <<  endl;
 		if (doW && ((leptonFlavor == "SingleMuon" && nMuons == 1 && nLeptons == 1 && nElectrons == 0) || (leptonFlavor == "SingleElectron" && nMuons == 0 && nLeptons == 1 && nElectrons == 1))) {
-			passesLeptonReq = true;
-			countEventpassLepReq++;
-		}
-
+		        passesLeptonReq = true;
+		        countEventpassLepReq++;
+		}   
+                    
         //=======================================================================================================//
         //          Retrieving jets           //
         //====================================//
@@ -807,20 +852,20 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
         double METscale(0.);
         double XMETscale(0.), YMETscale(0.);            // for calculating METscale
         double TempMETpt(0.), TempMETphi(0.), XMETpt(0.), YMETpt(0.) ; // for calculating METscale
-
+                    
         vector<jetStruct> jets, jetsAdditional, jetsPuMva, jets_20, jetsDR02, jetsNoDRCut, jetsPt100DR04; // additional jet collection with pt threshold of 20 GeV
         TLorentzVector leadJ, secondJ, jet1Plus2, jet1Minus2;
-        
+                    
         //*************************************** begin edit *************************************************************//
         TLorentzVector newLeadJ, newSecondJ, newThirdJ, newFourthJ;
         double ForwardJetRapidity(0), BackwardJetRapidity(0);
         vector<TLorentzVector> vJetYOrdered;
         //**************************************** end edit **************************************************************//
-        
+                    
         int countBJets(0);
 	int countDR02CutBJets(0), countDR04CutBJets(0);
         int countWbBjets(0); // Wb study
-
+                    
         if (hasRecoInfo) {
             int countNJetsVSBeta[10] = {0};
             nTotJets = JetAk04Eta->size();
@@ -1254,6 +1299,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
             nGoodGenJets = genJets.size();
             nGenJetsAdd = genJetsAdditional.size();
 			nGenJetsNoDRCut = genJetsNoDRCut.size();
+            cout << " nTotGenJets = " << nTotGenJets <<"; nGoodGenJets = genJets.size() = " << genJets.size() << endl;
         }
         //=======================================================================================================//
 
@@ -3714,14 +3760,14 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
 
 
     cout << "Number of events                               : " << nEvents << endl;
-	cout << "Total GEN weight of all events                 : " << TotalGenWeight << endl;
-	cout << "Number of events pass HasMET                   : " << countEvtpassHasMET << endl;
-	cout << "Number of events pass trigger                  : " << countEventpassTrig << endl;
-	cout << "Number of events pass MET Filter               : " << nEventsPassMETFilter << endl;
-	//cout << "Number of events NotPassChfNhfFilter           : " << countEvntsNotPassChfNhfFilter << endl;
-	cout << "Number of events pass Lepton requirements      : " << countEventpassLepReq << endl;
-	cout << "Number of events pass MT cut                   : " << nEventsWithTwoGoodLeptons << endl;
-	cout << "Number of events pass Btag veto                : " << countEventpassBveto << endl;
+    cout << "Total GEN weight of all events                 : " << TotalGenWeight << endl;
+    cout << "Number of events pass HasMET                   : " << countEvtpassHasMET << endl;
+    cout << "Number of events pass trigger                  : " << countEventpassTrig << endl;
+    cout << "Number of events pass MET Filter               : " << nEventsPassMETFilter << endl;
+    //cout << "Number of events NotPassChfNhfFilter           : " << countEvntsNotPassChfNhfFilter << endl;
+    cout << "Number of events pass Lepton requirements      : " << countEventpassLepReq << endl;
+    cout << "Number of events pass MT cut                   : " << nEventsWithTwoGoodLeptons << endl;
+    cout << "Number of events pass Btag veto                : " << countEventpassBveto << endl;
     //cout << "Number with two good leptons no charge no mass : " << nEventsWithTwoGoodLeptonsNoChargeNoMass << endl;
     //cout << "Number with two good leptons no mass           : " << nEventsWithTwoGoodLeptonsNoMass << endl;
     cout << "Total GEN pass: RECO weight of all events      : " << TotalGenWeightPassGENPU << endl;
@@ -3742,8 +3788,18 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
     cout << "Number GEN Inclusif 3 jets                     : " << GENnEventsIncl3Jets << endl;
     cout << "Sherpa weight                                  : " << sumSherpaW << endl;
     cout << "MC weight                                      : " << sumEventW << endl;
-	cout << "sum_amcNLO_W fill                              : " << sum_amcNLO_W << endl;
-	cout << "sum_amcNLO_1 fill                              : " << sum_amcNLO_1 << endl;
+    cout << "sum_amcNLO_W fill                              : " << sum_amcNLO_W << endl;
+    cout << "sum_amcNLO_1 fill                              : " << sum_amcNLO_1 << endl;
+
+    std::cout << "\nGen Lepton Status --- " << std::endl;
+    std::cout << "#events considered/looped over: " << nEvents << std::endl;
+    std::cout << "#events w/ gen leptons that have relevant PDG ID: " << npassesGenLepSelector << std::endl;
+    std::cout << "#events w/ gen leptons that are GLepBarePrompt: " << npassesGenLepBarePrompt << std::endl;
+    std::cout << "#events w/ prompt gen neutrinos: " << numGenPromptNeutrinos << std::endl;
+    std::cout << "#events w/ prompt gen electrons: " << numGenPromptElectrons << std::endl;
+    std::cout << "#events w/ prompt gen muons: " << numGenPromptMuons << std::endl;
+    std::cout << "#events w/ at least two good gen leptons: " << numHasAtLeastTwoGenLeptons << std::endl;
+    std::cout << "#events w/ passesGenLeptonCut: " << npassesGenLeptonCut << std::endl;
 	
 	
    if (doTTreweighting)       cout << "We run to TTbar with reweighting :   " << weightSum << "  and the original weight is :" << weightSumNoTopRew << endl;
@@ -4321,10 +4377,19 @@ void ZJetsAndDPS::getMcNorm_amcNLO(string inFile_Name, string storageElement){
 		TH1D *countEvtSamHist, *countEvtBonHist, *sumEvtSamWghtHist, *sumEvtBonWghtHist;
 
 		countFiles++;
-		cout <<  " --- " << line << endl;
-		//TFile * f = new TFile(("../DataW_AMCNLO/" + line).c_str());
-		//for alpha-s
-                TFile * f = new TFile((storageElement + line).c_str());
+		cout <<  "Line in List txt file: " << line << endl;
+		
+		TFile *f;
+
+                if (fileName.find("gen_amcNLO") != string::npos) {
+                    //for original GEN file
+		    f = new TFile(("../DataW_AMCNLO/" + line).c_str());
+		}
+		else {
+	   	    //for alpha-s
+  	            f = new TFile((storageElement + line).c_str());
+		}
+
 		//TFile * f = new TFile(("../DataW/" + line).c_str());
 		f->cd("demo");
 		inHist = (TH1D*)f->Get("demo/hWeights_1001");
