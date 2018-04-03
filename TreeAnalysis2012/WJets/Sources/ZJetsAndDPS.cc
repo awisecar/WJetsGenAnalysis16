@@ -307,7 +307,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     cout << " run on " << nentries << " events" << endl;
    //--- Begin Loop All Entries --
    for (Long64_t jentry(0); jentry < nentries; jentry++){
-   //for (Long64_t jentry(0); jentry < 100000; jentry++){
+   //for (Long64_t jentry(0); jentry < 500000; jentry++){
         Long64_t ientry = LoadTree(jentry);
         if (ientry < 0) break;
 
@@ -679,6 +679,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                 if (!lepSelector) continue ;
 
                 if (GLepBarePrompt ->at(i)) npassesGenLepBarePrompt++;
+                //andrew -- turn GLepBarePrompt requirement off/on temporarily -- 5 March 2018
                 if (!GLepBarePrompt->at(i)) continue ;
                 
                 
@@ -709,6 +710,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 //                     || ( GLepBareSt->at(i) == 1 && lepSelector && charge == 0 && doW ))
                 
                 if (lepSelector
+                    //andrew -- turn GLepBarePrompt off/on just temporarily -- 5 March 2018
                     && GLepBarePrompt->at(i)
                     && GLepBareSt->at(i) == 1
                     && ( abs(GLepBareId->at(i)) == LeptonID || (charge == 0 && doW) ) )
@@ -755,7 +757,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                 }
             }
             nGenLeptons = genLeptons.size();
-            cout << " nTotGenLeptons = " << nTotGenLeptons <<"; nGenLeptons = genLeptons.size() = " << genLeptons.size() << endl;
+            //cout << " nTotGenLeptons = " << nTotGenLeptons <<"; nGenLeptons = genLeptons.size() = " << genLeptons.size() << endl;
             
 //            if (countTauS3 == 0 && fileName.find("UNFOLDING") != string::npos){
 //                //partonsN->Fill(nup_-5);
@@ -1299,7 +1301,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
             nGoodGenJets = genJets.size();
             nGenJetsAdd = genJetsAdditional.size();
 			nGenJetsNoDRCut = genJetsNoDRCut.size();
-            cout << " nTotGenJets = " << nTotGenJets <<"; nGoodGenJets = genJets.size() = " << genJets.size() << endl;
+            //cout << " nTotGenJets = " << nTotGenJets <<"; nGoodGenJets = genJets.size() = " << genJets.size() << endl;
         }
         //=======================================================================================================//
 
@@ -3730,11 +3732,10 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
         if (hasRecoInfo && !isData){
             if (sumEventW > 0) listOfHistograms[i]->Scale(skimAccep_[0]/sumEventW);
         }
-		if ((fileName.find("gen_amcNLO") != string::npos) || (fileName.find("as_") != string::npos)){
-			//if (sum_amcNLO_W > 0) listOfHistograms[i]->Scale(1/sum_amcNLO_W);
-			if (allSampEvtWSums[0] > 0) listOfHistograms[i]->Scale(1/allSampEvtWSums[0]);
-		}
-
+	if ((fileName.find("gen_amcNLO") != string::npos) || (fileName.find("as_") != string::npos)){
+		//if (sum_amcNLO_W > 0) listOfHistograms[i]->Scale(1/sum_amcNLO_W);
+		if (allSampEvtWSums[0] > 0) listOfHistograms[i]->Scale(1/allSampEvtWSums[0]);
+	}
         listOfHistograms[i]->Write();
     }
     //--- Save all the RooUnfoldResponses ---
@@ -3920,18 +3921,19 @@ ZJetsAndDPS::ZJetsAndDPS(string fileName_, float lumiScale_, float puScale_, boo
     //do getMcNorm_amcNLO on files with just GEN(?)
     if (fileName.find("gen_amcNLO") != string::npos || fileName.find("as_") != string::npos) {
         getMcNorm_amcNLO(fileName, storageElement);
+        std::cout << "GEN MC histos currently normalized to allSampEvtWSums[0] - as of 07.03.2018" << std::endl;
 	cout << " allSampEvtWSums[0] " << allSampEvtWSums[0] << endl;
 	cout << " countAllSamp " << countAllSamp[0] << " " << countAllSamp[1] << endl;
 	cout << " countAllBonz " << countAllBonz[0] << " " << countAllBonz[1] << endl;
 	}
 	
 
- //   //do getMcNorm() on files with GEN info that are not files that just contain GEN
- //   if ((!isData && !(fileName.find("gen_amcNLO") != string::npos)) || (!isData && !(fileName.find("as_") != string::npos))) getMcNorm();
- //   //else, reco
- //   else skimAccep_ = std::vector<double>(1, 1.);
+//    //do getMcNorm() on files with GEN info that are not files that just contain GEN
+//    if ((!isData && !(fileName.find("gen_amcNLO") != string::npos)) || (!isData && !(fileName.find("as_") != string::npos))) getMcNorm();
+// //   //else, reco
+//    else skimAccep_ = std::vector<double>(1, 1.);
  
- //   andrew -- skimAccep only matters for files w/ both gen and reco(?), so try this line
+///  //   andrew -- skimAccep only matters for files w/ both gen and reco(?), so try this line
     skimAccep_ = std::vector<double>(1, 1.);
 }
 

@@ -1,1 +1,1 @@
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0108/wjets_amcnlo_gen_2j_as0108_1.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0108/WJToLNu_2j_5f_NLO_FxFx_as_0108_GENtree_1.root

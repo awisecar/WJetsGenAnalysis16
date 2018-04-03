@@ -14,8 +14,10 @@ dateTo = datetime.datetime.now().strftime("%Y_%m_%d_%H%M%S")
 mtmpdir = 'wjetsjobsGEN_' + dateTo
 os.system('mkdir ' + mtmpdir)
 
+cmsswdir = '/afs/cern.ch/user/a/awisecar/WJetsGenAnalysis16/CMSSW_5_3_20/src'
+
 #doWhat = [10, 11, 12, 13, 14, 15, 16, 17, 52]
-doWhat = [10, 17]
+doWhat = [17]
 doQCD = [0]
 doSysRunning = [0]
 
@@ -29,10 +31,10 @@ for what in doWhat:
 			tjobname = mtmpdir+'/job_' + 'do' + str(what) + '_QCD' + str(QCD) + '_Sys' + str(sys) + '.sh'
 
 			job = '#!/bin/bash\n'
+                        job =  'cd ' + cmsswdir + ' \n' 
+                        job += 'eval `scramv1 runtime -sh`\n'
                         job += 'cd ' + cwd + ' \n'
-     	 	        #job += 'cd /afs/cern.ch/user/a/awisecar/WJetsGenAnalysis16/CMSSW_5_3_20/src/WJetsGenAnalysis16/TreeAnalysis2012/WJets\n'
-			job += 'eval `scramv1 runtime -sh`'
-		
+
 			com = 'root -b -q runDYJets.cc\(' + str(what) + ',' + str(QCD) + ',' + str(sys) + '\) 2>&1'
 			print '... going to submit run command ==> ', com
 			com +='\n\n'

@@ -20,7 +20,7 @@
     }
         
     //------
-    int doWhat       = 10;    // just 10, 17 for now ...   
+    int doWhat       = 17;    // just 12, 17 for now ...   
                               // 52 - W+jets aMC_NLO MC sample
                               // 10, 11, 12, ..., 17 - W+jets NLO FxFx alpha-s variations
                               // 100 - all ; 0 - data, 1 - background , 2 - tau ?, 3 - DY, 4 - W+jets,
@@ -291,15 +291,15 @@
         //alpha-S = 0.112
         if ( doWhat == 12){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS3("SMu_13TeV_WJets_FxFx_0J_0112as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS3("SMu_13TeV_WJets_FxFx_0J_0112as_dR_5311_List", muLumi*50140.00, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS3.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS3.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS3("SMu_13TeV_WJets_FxFx_1J_0112as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS3("SMu_13TeV_WJets_FxFx_1J_0112as_dR_5311_List", muLumi*7924.88, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS3.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS3.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS3("SMu_13TeV_WJets_FxFx_2J_0112as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS3("SMu_13TeV_WJets_FxFx_2J_0112as_dR_5311_List", muLumi*2864.80, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS3.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS3.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         }
@@ -371,17 +371,30 @@
         //alpha-S = 0.124
         if ( doWhat == 17){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS8("SMu_13TeV_WJets_FxFx_0J_0124as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS8("SMu_13TeV_WJets_FxFx_0J_0124as_dR_5311_List", muLumi*55217.50, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS8.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS8.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS8("SMu_13TeV_WJets_FxFx_1J_0124as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS8("SMu_13TeV_WJets_FxFx_1J_0124as_dR_5311_List", muLumi*9291.78, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS8.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS8.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS8("SMu_13TeV_WJets_FxFx_2J_0124as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS8("SMu_13TeV_WJets_FxFx_2J_0124as_dR_5311_List", muLumi*2940.29, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS8.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS8.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
+        }
+
+
+	if ( doWhat == 22 ) {
+            int doGen = 1;
+            ZJetsAndDPS WJetsNLOalljaS3("SMu_13TeV_WJets_FxFx_allJ_0112as_dR_5311_List",  muLumi*60929.68 , 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            WJetsNLOalljaS3.Loop(0, 1, 0, 0, 0);
+        }
+
+        if ( doWhat == 27 ) {
+            int doGen = 1;
+            ZJetsAndDPS WJetsNLOalljaS3("SMu_13TeV_WJets_FxFx_allJ_0124as_dR_5311_List",  muLumi*67449.57 , 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            WJetsNLOalljaS3.Loop(0, 1, 0, 0, 0);
         }
         
 	// amcNLO
