@@ -59,7 +59,9 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     //--- Counters to check the yields ---
     unsigned int nEvents(0), nEventsIncl0Jets(0), nEventsUNFOLDIncl0Jets(0);
     unsigned int countEventpassTrig(0), countEvtpassHasMET(0), nEventsPassMETFilter(0), countEventpassLepReq(0), countEventpassBveto(0);
-    unsigned int nEventsWithTwoGoodLeptonsNoChargeNoMass(0), nEventsWithTwoGoodLeptonsNoMass(0), nEventsWithTwoGoodLeptons(0);
+    //unsigned int nEventsWithTwoGoodLeptonsNoChargeNoMass(0); 
+    //unsigned int nEventsWithTwoGoodLeptonsNoMass(0); 
+    unsigned int nEventsWithTwoGoodLeptons(0);
     unsigned int nEventsExcl0Jets(0), nEventsExcl1Jets(0), nEventsExcl2Jets(0), nEventsExcl3Jets(0),nEventsIncBJets(0);
     unsigned int GENnEventsIncl0Jets(0), GENnEventsIncl1Jets(0), GENnEventsIncl2Jets(0), GENnEventsIncl3Jets(0);
     double TotalGenWeight(0.), TotalGenWeightPassGEN(0.), TotalGenWeightPassGENPU(0.), TotalGenWeightPassRECO(0.), TotalRecoWeightPassRECO(0.);
@@ -70,8 +72,17 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     int numGenPromptNeutrinos(0);
     int numGenPromptElectrons(0);
     int numGenPromptMuons(0);
+    int npassesGenLeptonAnalysisCuts(0);
     int numHasAtLeastTwoGenLeptons(0);
     int npassesGenLeptonCut(0);
+    int npassesMTCut(0);
+    int npassesMETcut(0);
+
+    int npassesDPSPartonCut(0);
+
+    int npassesBasicGenJetCuts(0);
+    int npassesAnalysisGenJetCuts(0);
+    int npassesGenJetCut(0);
     
     //------------------------------------
     if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
@@ -99,7 +110,16 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
         LeptonID = 13;
     }
     //------------------------------------
-    cout << " begin: "<< hasRecoInfo <<"  " << hasGenInfo <<"  " << doQCD<<"  " << doSSign<<"  " << doInvMassCut << "  " << METcut << "  " <<doBJets <<"  " <<doPUStudy << endl;
+
+    cout << "--- begin: " << endl;
+    cout << "hasRecoInfo: " << hasRecoInfo << endl;
+    cout << "hasGenInfo: " << hasGenInfo << endl; 
+    cout << "doQCD: " << doQCD << endl; 
+    cout << "doSSign: " << doSSign << endl; 
+    cout << "doInvMassCut: " << doInvMassCut << endl; 
+    cout << "METcut: " << METcut << endl; 
+    cout << "doBJets: " << doBJets << endl; 
+    cout << "doPUStudy: " << doPUStudy << endl;
     
     
     //==========================================================================================================//
@@ -117,7 +137,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     //==========================================================================================================//
     //       Load efficiency tables        //
     //====================================//
-    std::cout << "\n" << std::endl;
+    //std::cout << "\n" << std::endl;
     table LeptIso, LeptID, LeptTrig, Ele_Rec;
     table TableJESunc("EfficiencyTables/JECUncertainty_Summer16_23Sep2016V4_AK4PF.txt");
     if (energy == "13TeV"){
@@ -154,6 +174,8 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     cout << "Inv. mass cut (not actually utilized in analysis?): " << doInvMassCut << endl;
     cout << "Use B jets: " << doBJets << endl;
     cout << "Do PU study: " << doPUStudy << endl;
+    cout << "doDR: " << doDR << endl;
+    cout << "doFlat: " << doFlat << endl;
    
     cout << "\ndoW? " << doW << endl;
     cout << "doZ? " << doZ << endl;
@@ -257,9 +279,9 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
     int countTrigSum[4] = {0};
 
     // setting weight when running on MIX of exclusive DY/WJets files to match number of parton events
-    double mixingWeightsDY[4] = {0.1926862,  0.07180968,  0.04943502,  0.03603373 }; // here we match all partons, and combine electron and muon side
-    double mixingWeightsWJ_SMu[4] ={0.366713,  0.1119323,  0.07641136,  0.03803325};
-    double mixingWeightsWJ_SE[4] ={0.3667127984048746, 0.111932213229137, 0.076411344088767, 0.0380331330318}; // this need to be updated
+    //double mixingWeightsDY[4] = {0.1926862,  0.07180968,  0.04943502,  0.03603373 }; // here we match all partons, and combine electron and muon side
+    //double mixingWeightsWJ_SMu[4] ={0.366713,  0.1119323,  0.07641136,  0.03803325};
+    //double mixingWeightsWJ_SE[4] ={0.3667127984048746, 0.111932213229137, 0.076411344088767, 0.0380331330318}; // this need to be updated
 
     //==========================================================================================================//
     // Start looping over all the events //
@@ -343,6 +365,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
         // line below is to see distributions as provided with default MC PU distribution
         double reweighting(1);
         
+        //andrew -- calculating weight for use in filling histograms later
         weight = weight * lumiScale * xsec;
         
     /*KO    if (fileName.find("MIX") != string::npos && nup_ > 5) {
@@ -637,6 +660,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
         vector<int> usedGenPho;
         TLorentzVector genLep1, genLep2, genZ;
         leptonStruct genLepton1, genLepton2;
+        double genMT;
         int nuID = 0;
         //int countTauS3 = 0;
 
@@ -679,7 +703,6 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                 if (!lepSelector) continue ;
 
                 if (GLepBarePrompt ->at(i)) npassesGenLepBarePrompt++;
-                //andrew -- turn GLepBarePrompt requirement off/on temporarily -- 5 March 2018
                 if (!GLepBarePrompt->at(i)) continue ;
                 
                 
@@ -698,6 +721,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                     if (abs(GLepBareId->at(i)) == 13) numGenPromptMuons++;
                 }
                 
+                //andrew -- setting the initial pt, eta, phi, E values for lepton here (before charged lepton dressing)
                 leptonStruct genLep = {GLepBarePt->at(i), GLepBareEta->at(i), GLepBarePhi->at(i), GLepBareE->at(i), charge, 0., 0.};
                 leptonStruct genLepNoFSR = {GLepBarePt->at(i), GLepBareEta->at(i), GLepBarePhi->at(i), GLepBareE->at(i), charge, 0., 0. };
                 
@@ -710,7 +734,6 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 //                     || ( GLepBareSt->at(i) == 1 && lepSelector && charge == 0 && doW ))
                 
                 if (lepSelector
-                    //andrew -- turn GLepBarePrompt off/on just temporarily -- 5 March 2018
                     && GLepBarePrompt->at(i)
                     && GLepBareSt->at(i) == 1
                     && ( abs(GLepBareId->at(i)) == LeptonID || (charge == 0 && doW) ) )
@@ -728,21 +751,25 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                             
                             TLorentzVector tmpGenPho;
                             //tmpGenPho.SetPtEtaPhiM(GLepClosePhotPt->at(j), GLepClosePhotEta->at(j), GLepClosePhotPhi->at(j), 0.);
+                            //andrew -- fetch the kinematics of each photon in the event
                             tmpGenPho.SetPtEtaPhiM(GPhotPt->at(j), GPhotEta->at(j), GPhotPhi->at(j), 0.);
                             int used(0);
                             for (unsigned short k(0); k < usedGenPho.size(); k++){
                                 if (j == usedGenPho[k]) used = 1;
                             }
+                            //andrew -- line below if the photons from FSR are next to the muon within a dR cone size of 0.1
                             if (deltaR(tmpGenPho.Phi(), tmpGenPho.Eta(), genLepNoFSR.phi, genLepNoFSR.eta) <= 0.1 && !used){
+                                //if they are, add the pT, eta, phi, mass of each photon's TLorentzVector to the muon TLorentzVector 
                                 tmpGenLep += tmpGenPho;
                                 usedGenPho.push_back(j);
                             }
                         }
+                        //now, re-assign the genLep kinematics to that for the dressed version of the lepton (for charged leptons)
                         genLep.pt = tmpGenLep.Pt();
                         genLep.eta = tmpGenLep.Eta();
                         genLep.phi = tmpGenLep.Phi();
                         genLep.energy = tmpGenLep.E();
-                    }
+                    }//end charged lepton dressing
                     
                     //-- store lepton in the collection
                     if (doZ && genLep.pt >= 20 && fabs(genLep.eta) <= 2.4 && fabs(genLep.charge) > 0){
@@ -750,12 +777,14 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
                     }
                     
                     //if (doW && ((fabs(genLep.charge) > 0 && genLep.pt >= 25 && fabs(genLep.eta) <= 2.1)||(fabs(genLep.charge) == 0))){
-                    //analysis cut on leptons (both charged and neutrinos) -- W boson
-                    if (doW && ((fabs(genLep.charge) > 0 && genLep.pt >= 25 && fabs(genLep.eta) <= 2.4) || (fabs(genLep.charge) == 0 && genLep.pt >= METcut))){
+
+                    //andrew -- analysis cut on leptons (both charged and neutrinos) -- W boson
+                    if (doW && ((fabs(genLep.charge) > 0 && genLep.pt >= 26 && fabs(genLep.eta) <= 2.4) || (fabs(genLep.charge) == 0 && genLep.pt >= METcut))){
                         genLeptons.push_back(genLep); 
+                        npassesGenLeptonAnalysisCuts++;
                     }
                 }
-            }
+            } //end loop over nTotGenLeptons in the event
             nGenLeptons = genLeptons.size();
             //cout << " nTotGenLeptons = " << nTotGenLeptons <<"; nGenLeptons = genLeptons.size() = " << genLeptons.size() << endl;
             
@@ -782,12 +811,18 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 numHasAtLeastTwoGenLeptons++;
                 
                 // sort leptons by descending pt
+                // andrew -- so we then sort all of good gen leptons by their pT
+                // and we will pick the two highest pT objects, of which we require belo win the MT cut
+                // to be exactly one muon and one neutrino
                 sort(genLeptons.begin(), genLeptons.end(), LepDescendingOrder);
                 genLepton1 = genLeptons[0];
                 genLepton2 = genLeptons[1];
                 
                 if (doW){
-                    double genMT;
+                    //double genMT;
+                    //here we mandate that the two highest pT objects be exactly one muon and one neutrino
+                    //both have passed their respective analysis cuts above
+                    //note: genLepton1 is always picked as the muon, and genLepton2 the neutrino, done to calculate the MT
                     if (abs(genLeptons[0].charge) > 0 && genLeptons[1].charge == 0){
                         genLepton1 = genLeptons[0];
                         genLepton2 = genLeptons[1];
@@ -798,11 +833,19 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                         genLepton2 = genLeptons[0];
                         genMT = sqrt(2 *genLepton2.pt * genLepton1.pt * (1 - cos(genLepton2.phi - genLepton1.phi)));
                     }
+
+                    //andrew -- so the MT requirement is also the 1muon-1neutrino requirement..
+                    //if the first two sorted leptons don't have the charge properties of 1 mu and 1 nu, 
+                    //then the genMT variable is set at a really low negative value
+                    //so this should cut out events with more than one muon that makes its way into the genLeptons collection
+
                     else genMT = -99.0;
-                    
+                   
+                    if (genMT >= MTCut) npassesMTCut++;
+                    if (genLepton2.pt >= METcut) npassesMETcut++;
                     if (genMT >= MTCut && genLepton2.pt >= METcut) {
 			passesGenLeptonCut = 1;
-			npassesGenLeptonCut++;
+			if (passesGenLeptonCut) npassesGenLeptonCut++;
 		    }
                 }
 
@@ -821,7 +864,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                         && genZ.Eta()*100 > ZEtaCutMin && genZ.Eta()*100 < ZEtaCutMax && genZ.Pt()>= ZPtCutMin) {
                     
                     passesGenLeptonCut = 1;
-                    npassesGenLeptonCut++;
+                    if (passesGenLeptonCut) npassesGenLeptonCut++;
                 }   
                 //----- End For Z+jets -------
             }       
@@ -1251,7 +1294,10 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
         //=======================================================================================================//
         //        Retrieving gen jets         //
         //====================================//
-        bool passesGenJetCut(1), passesGenEWKJetPt(0), passesGenEWKJetFwdEta(0);
+        //andrew -- why was passesGenJetCut initialized to 1 before? -- 4.4.18
+        //bool passesGenJetCut(1);
+        bool passesGenJetCut(0);  
+        bool passesGenEWKJetPt(0), passesGenEWKJetFwdEta(0);
         unsigned short nGoodGenJets(0), nGenJetsAdd(0), nGoodGenJets_20(0), nTotGenJets(0), nGenJetsNoDRCut(0), nGenJetsDR02Cut(0), nGenJetsPt100DR04(0);
         double genJetsHT(0);
         double genJetsHT_20(0);
@@ -1278,14 +1324,15 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     //if ( deltaR(genJet.phi, genJet.eta, genLeptons[j].phi, genLeptons[j].eta) < dRmin ) dRmin = deltaR(genJet.phi, genJet.eta, genLeptons[j].phi, genLeptons[j].eta);
                     // I need this line because for to me unknown reason I CAN NO REMOVE ELECTRONS FROM Z IN SHERPA !!!!
                     //if ((genLeptons[j].charge != 0) && (doDR || (leptonFlavor == "Electrons" && fileName.find("HepMC") != string::npos))){
-					if ( (genLeptons[j].charge != 0) && (doDR) ){
-						if (deltaR(genJet.phi, genJet.eta, genLeptons[j].phi, genLeptons[j].eta) < 0.4) genJetPassesdRCut = 0;
-						if (deltaR(genJet.phi, genJet.eta, genLeptons[j].phi, genLeptons[j].eta) < 0.2) genJetPassesdR02Cut = 0;
+                    //this next line sets genJetPassesdRCut = 0 if the deltaR between jet and muon is not greater than 0.4
+		    if ( (genLeptons[j].charge != 0) && (doDR) ){
+		        if (deltaR(genJet.phi, genJet.eta, genLeptons[j].phi, genLeptons[j].eta) < 0.4) genJetPassesdRCut = 0;
+			if (deltaR(genJet.phi, genJet.eta, genLeptons[j].phi, genLeptons[j].eta) < 0.2) genJetPassesdR02Cut = 0;
                     }
                 }
 				
-				if (genJetPassesdRCut)   genJet.passDR04 = true;
-				if (genJetPassesdR02Cut) genJet.passDR02 = true;
+		if (genJetPassesdRCut)   genJet.passDR04 = true;
+		if (genJetPassesdR02Cut) genJet.passDR02 = true;
 
                 //if (genJet.pt >= 10 && genJet.pt < 1000. && fabs(genJet.eta) <= 4.7 && genJetPassesdRCut){
                 if (genJetPassesdRCut && genJet.pt >= 10 && fabs(genJet.eta) <= 4.7){ // Apichart Z+jets uses 5.0
@@ -1293,14 +1340,18 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     passesGenEWKJetFwdEta = (fabs(genJet.eta) > 2.4);
                     genJets.push_back(genJet);                  
                     if (genJet.pt >=  15.) genJetsAdditional.push_back(genJet);
-                }		
-				if (genJet.pt >= 10 && fabs(genJet.eta) <= 4.7){
-					genJetsNoDRCut.push_back(genJet);
-				}
+                }	
+                //andrew -- there is no dR cut on genJets being added to the genJetsNoDRCut collection
+                //but genJet already has information assigned to it whether it passed the requirement or not
+                //so one could make a cut on passDR04 on the genJetsNoDRCut collection later, as done below
+		if (genJet.pt >= 10 && fabs(genJet.eta) <= 4.7){
+		    genJetsNoDRCut.push_back(genJet);
+                    npassesBasicGenJetCuts++;
+		}
             }
             nGoodGenJets = genJets.size();
             nGenJetsAdd = genJetsAdditional.size();
-			nGenJetsNoDRCut = genJetsNoDRCut.size();
+	    nGenJetsNoDRCut = genJetsNoDRCut.size();
             //cout << " nTotGenJets = " << nTotGenJets <<"; nGoodGenJets = genJets.size() = " << genJets.size() << endl;
         }
         //=======================================================================================================//
@@ -1485,7 +1536,10 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
 
 	double mindRjmu(99999), mindRj04Pt100mu(99999), mindRj1mu(99999), mindRj2mu(99999), mindRdijet04Pt100mu(99999);
 	int IndClosestDR02Jet(-1), IndEvtClosestDR04Jet(-1), IndEvtClosestDR04DiJet(-1);
-	double genMindRjmu(99999), genMindRj04Pt100mu(99999), genMindRj1mu(99999), genMindRj2mu(99999), genMindRdijet04Pt100mu(99999);
+	double genMindRjmu(99999), genMindRj04Pt100mu(99999); 
+        //double genMindRj1mu(99999); 
+        //double genMindRj2mu(99999); 
+        double genMindRdijet04Pt100mu(99999);
 	int genIndClosestDR02Jet(-1), genIndEvtClosestDR04Jet(-1), genIndEvtClosestDR04DiJet(-1);
 
         if (hasRecoInfo){
@@ -1493,23 +1547,23 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
             for (unsigned short i(0); i < nJetsNoDRCut; i++){
                 if (jetsNoDRCut[i].pt >= jetPtCutMin && jetsNoDRCut[i].passDR04) tmpJets.push_back(jetsNoDRCut[i]);
                 if (jetsNoDRCut[i].pt >= 20          && jetsNoDRCut[i].passDR04) jets_20.push_back(jetsNoDRCut[i]);
-				if (jetsNoDRCut[i].pt >= jetPtCutMin && jetsNoDRCut[i].passDR02) jetsDR02.push_back(jetsNoDRCut[i]);
-				if (jetsNoDRCut[i].pt >= 100         && jetsNoDRCut[i].passDR04) jetsPt100DR04.push_back(jetsNoDRCut[i]);
+		if (jetsNoDRCut[i].pt >= jetPtCutMin && jetsNoDRCut[i].passDR02) jetsDR02.push_back(jetsNoDRCut[i]);
+		if (jetsNoDRCut[i].pt >= 100         && jetsNoDRCut[i].passDR04) jetsPt100DR04.push_back(jetsNoDRCut[i]);
             }
             jets.clear(); 
             jets = tmpJets; 
             tmpJets.clear(); 
             nGoodJets = jets.size();
             nGoodJets_20 = jets_20.size();
-			nJetsDR02Cut = jetsDR02.size();
-			nJetsPt100DR04 = jetsPt100DR04.size();
+	    nJetsDR02Cut = jetsDR02.size();
+	    nJetsPt100DR04 = jetsPt100DR04.size();
 			
-			//--- Sort jets ---
-			if (nGoodJets    >= 1) sort(jets.begin(), jets.end(), JetDescendingOrder);
-			if (nJetsAdd     >= 1) sort(jetsAdditional.begin(), jetsAdditional.end(), JetDescendingOrder);
-			if (nGoodJets_20 >= 1) sort(jets_20.begin(), jets_20.end(), JetDescendingOrder);
-			if (nJetsDR02Cut >= 1) sort(jetsDR02.begin(), jetsDR02.end(), JetDescendingOrder);
-			if (nJetsPt100DR04 >= 1) sort(jetsPt100DR04.begin(), jetsPt100DR04.end(), JetDescendingOrder);
+	    //--- Sort jets ---
+	    if (nGoodJets    >= 1) sort(jets.begin(), jets.end(), JetDescendingOrder);
+	    if (nJetsAdd     >= 1) sort(jetsAdditional.begin(), jetsAdditional.end(), JetDescendingOrder);
+	    if (nGoodJets_20 >= 1) sort(jets_20.begin(), jets_20.end(), JetDescendingOrder);
+	    if (nJetsDR02Cut >= 1) sort(jetsDR02.begin(), jetsDR02.end(), JetDescendingOrder);
+	    if (nJetsPt100DR04 >= 1) sort(jetsPt100DR04.begin(), jetsPt100DR04.end(), JetDescendingOrder);
             
             if (nGoodJets >= 1){
                 leadJ.SetPtEtaPhiE(jets[0].pt, jets[0].eta, jets[0].phi, jets[0].energy);               
@@ -1535,7 +1589,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 //*************************************** begin edit *************************************************************//
                 newSecondJ.SetPtEtaPhiE(jets[1].pt, jets[1].eta, jets[1].phi, jets[1].energy);
                 //**************************************** end edit ************************************************************// 
-		        jet1Plus2 = leadJ + secondJ;
+		jet1Plus2 = leadJ + secondJ;
                 jet1Minus2 = leadJ - secondJ;
             }
             //*************************************** begin edit *************************************************************//
@@ -1554,71 +1608,105 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
             for (unsigned short i(0); i < nGoodJets_20; i++){
                 jetsHT_20 += jets[i].pt;  
             }
-			// calculate the closest jet w.r.t to the muon for jetsDR02 collection
-			if (nJetsDR02Cut >= 1 && passesLeptonReq){
-				for (unsigned short i(0); i < nJetsDR02Cut; i++){
-					double dRjmu(9999);
-					dRjmu = fabs(deltaR(jetsDR02[i].phi, jetsDR02[i].eta, lepton1.phi, lepton1.eta));
-					if (dRjmu < mindRjmu){
-						mindRjmu = dRjmu;
-						IndClosestDR02Jet = i;
-					}
-				}
-			}
-			// calculate the closest jet w.r.t to the muon for jetsPt100DR04 collection
-			if (nJetsPt100DR04 >= 1 && passesLeptonReq){
-				for (unsigned short i(0); i < nJetsPt100DR04; i++){
-					double dRjmu(9999);
-					dRjmu = fabs(deltaR(jetsPt100DR04[i].phi, jetsPt100DR04[i].eta, lepton1.phi, lepton1.eta));
-					if (dRjmu < mindRj04Pt100mu){
-						mindRj04Pt100mu = dRjmu;
-						IndEvtClosestDR04Jet = i;
-					}
-				}
-			}
 
-			// calculate the closest jet in dijet w.r.t to the muon for jetsPt100DR04 collection
-			if (nJetsPt100DR04 >= 2 && passesLeptonReq){
-					double dRj1mu(9999);
-					double dRj2mu(9999);
-					dRj1mu = fabs(deltaR(jetsPt100DR04[0].phi, jetsPt100DR04[0].eta, lepton1.phi, lepton1.eta));
-					dRj2mu = fabs(deltaR(jetsPt100DR04[1].phi, jetsPt100DR04[1].eta, lepton1.phi, lepton1.eta));
+	    // calculate the closest jet w.r.t to the muon for jetsDR02 collection
+	    if (nJetsDR02Cut >= 1 && passesLeptonReq){
+	    	for (unsigned short i(0); i < nJetsDR02Cut; i++){
+	    		double dRjmu(9999);
+	    		dRjmu = fabs(deltaR(jetsDR02[i].phi, jetsDR02[i].eta, lepton1.phi, lepton1.eta));
+	    		if (dRjmu < mindRjmu){
+	    			mindRjmu = dRjmu;
+	    			IndClosestDR02Jet = i;
+	    		}
+	    	}
+	    }
+	    // calculate the closest jet w.r.t to the muon for jetsPt100DR04 collection
+	    if (nJetsPt100DR04 >= 1 && passesLeptonReq){
+	    	for (unsigned short i(0); i < nJetsPt100DR04; i++){
+	    		double dRjmu(9999);
+	    		dRjmu = fabs(deltaR(jetsPt100DR04[i].phi, jetsPt100DR04[i].eta, lepton1.phi, lepton1.eta));
+	    		if (dRjmu < mindRj04Pt100mu){
+	    			mindRj04Pt100mu = dRjmu;
+	    			IndEvtClosestDR04Jet = i;
+	    		}
+	    	}
+	    }
 
-					if (dRj1mu < dRj2mu){
-						mindRdijet04Pt100mu = dRj1mu;
-						IndEvtClosestDR04DiJet = 0;
-					}
-					if (dRj2mu < dRj1mu){
-						mindRdijet04Pt100mu = dRj2mu;
-						IndEvtClosestDR04DiJet = 1;
-					}
-				}
+	    // calculate the closest jet in dijet w.r.t to the muon for jetsPt100DR04 collection
+	    if (nJetsPt100DR04 >= 2 && passesLeptonReq){
+	        double dRj1mu(9999);
+	        double dRj2mu(9999);
+	        dRj1mu = fabs(deltaR(jetsPt100DR04[0].phi, jetsPt100DR04[0].eta, lepton1.phi, lepton1.eta));
+	        dRj2mu = fabs(deltaR(jetsPt100DR04[1].phi, jetsPt100DR04[1].eta, lepton1.phi, lepton1.eta));
+
+	        if (dRj1mu < dRj2mu){
+	        	mindRdijet04Pt100mu = dRj1mu;
+	        	IndEvtClosestDR04DiJet = 0;
+	        }
+	        if (dRj2mu < dRj1mu){
+	        	mindRdijet04Pt100mu = dRj2mu;
+	        	IndEvtClosestDR04DiJet = 1;
+	        }
+	    }
         }
 
         if (hasGenInfo){
-            vector< jetStruct> tmpJets;
+            vector<jetStruct> tmpJets;
             for (unsigned short i(0); i < nGenJetsNoDRCut; i++){
                 TLorentzVector gjetr;
                 gjetr.SetPtEtaPhiE(genJetsNoDRCut[i].pt, genJetsNoDRCut[i].eta, genJetsNoDRCut[i].phi, genJetsNoDRCut[i].energy);
                 //if (genJets[i].pt >= jetPtCutMin && genJets[i].eta >= double (jetEtaCutMin/10.) && genJets[i].eta <= (double )(jetEtaCutMax/10.) ){
-                if (genJetsNoDRCut[i].pt >= jetPtCutMin && fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR04) tmpJets.push_back(genJetsNoDRCut[i]);
+
+                //andrew -- this line right below is making the analysis cuts on jet pt, jet abs rapidity, and dR between muon and jet
+                //genJetsNoDRCut contains all of the jets that pass basic pT and rapidity cuts (these jets already carry passDR04 information)
+                if (genJetsNoDRCut[i].pt >= jetPtCutMin && fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR04) {
+                    tmpJets.push_back(genJetsNoDRCut[i]);
+                    npassesAnalysisGenJetCuts++;
+                }
+
                 if (genJetsNoDRCut[i].pt >= 20          && fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR04) genJets_20.push_back(genJetsNoDRCut[i]);
-				if (genJetsNoDRCut[i].pt >= jetPtCutMin && fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR02) genJetsDR02.push_back(genJetsNoDRCut[i]);
-				if (genJetsNoDRCut[i].pt >= 100			&& fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR04) genJetsPt100DR04.push_back(genJetsNoDRCut[i]);
+		if (genJetsNoDRCut[i].pt >= jetPtCutMin && fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR02) genJetsDR02.push_back(genJetsNoDRCut[i]);
+		if (genJetsNoDRCut[i].pt >= 100			&& fabs(gjetr.Rapidity()) <= 0.1*jetEtaCutMax && genJetsNoDRCut[i].passDR04) genJetsPt100DR04.push_back(genJetsNoDRCut[i]);
             }
+
+            //andrew -- and now it's here that we previously clear whatever was in genJets and then set it equal to the tmpJets collection (which is the part of the genJetsNoDRCut collection that passed the analysis cuts)
             genJets.clear();
             genJets = tmpJets; 
             tmpJets.clear(); 
             nGoodGenJets = genJets.size();
             nGoodGenJets_20 = genJets_20.size();
-			nGenJetsDR02Cut = genJetsDR02.size();
-			nGenJetsPt100DR04 = genJetsPt100DR04.size();
+	    nGenJetsDR02Cut = genJetsDR02.size();
+	    nGenJetsPt100DR04 = genJetsPt100DR04.size();
+ 
+            //need to double check that all the jets in genJets collection pass the requirements
+            //genJets is the collection used to fill all the gen histograms below
+            int passesGenJetPtMinCut(0);
+            int passesGenJetAbsRapCut(0);
+            int passesGenJetDR04Cut(0);
+            for (unsigned short i(0); i < nGoodGenJets; i++){
+                 TLorentzVector gjetvectemp;
+                 gjetvectemp.SetPtEtaPhiE(genJets[i].pt, genJets[i].eta, genJets[i].phi, genJets[i].energy);
+                 if (genJets[i].pt >= jetPtCutMin) passesGenJetPtMinCut++;
+                 if (fabs(gjetvectemp.Rapidity()) <= 0.1*jetEtaCutMax) passesGenJetAbsRapCut++;
+                 if (genJets[i].passDR04) passesGenJetDR04Cut++;
+            }
+            //andrew -- line below is requirement to have >=1 jets that pass the analysis requirements in the event 
+            //EDIT: turn this off for now, should not affect anything
+            //if (nGoodGenJets >= 1) {
+                //mandate that every jet that will go to fill histograms pass these three requirements
+                if ((passesGenJetPtMinCut == nGoodGenJets) && (passesGenJetAbsRapCut == nGoodGenJets) && (passesGenJetDR04Cut == nGoodGenJets)) {
+                    passesGenJetCut = 1;
+                    npassesGenJetCut++;
+                }
+            //}
+
+            //cout << "nGoodGenJets: " << nGoodGenJets << ", passesGenJetPtMinCut: " << passesGenJetPtMinCut << ", passesGenJetAbsRapCut: " << passesGenJetAbsRapCut << ", passesGenJetDR04Cut: " << passesGenJetDR04Cut << endl;
 			
-			//--- Sort gen jets ---
-			if (nGoodGenJets >= 1) sort(genJets.begin(), genJets.end(), JetDescendingOrder);
-			if (nGoodGenJets_20 >= 1) sort(genJets_20.begin(), genJets_20.end(), JetDescendingOrder);
-			if (nGenJetsDR02Cut >= 1) sort(genJetsDR02.begin(), genJetsDR02.end(), JetDescendingOrder);
-			if (nGenJetsPt100DR04 >= 1) sort(genJetsPt100DR04.begin(), genJetsPt100DR04.end(), JetDescendingOrder);
+	    //--- Sort gen jets ---
+	    if (nGoodGenJets >= 1) sort(genJets.begin(), genJets.end(), JetDescendingOrder);
+	    if (nGoodGenJets_20 >= 1) sort(genJets_20.begin(), genJets_20.end(), JetDescendingOrder);
+	    if (nGenJetsDR02Cut >= 1) sort(genJetsDR02.begin(), genJetsDR02.end(), JetDescendingOrder);
+	    if (nGenJetsPt100DR04 >= 1) sort(genJetsPt100DR04.begin(), genJetsPt100DR04.end(), JetDescendingOrder);
 			
             if (nGoodGenJets >= 1){
                 genLeadJ.SetPtEtaPhiE(genJets[0].pt, genJets[0].eta, genJets[0].phi, genJets[0].energy);
@@ -1635,9 +1723,11 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 genBackwardJetRapidity = *min_element(vJetRapidity.begin(), vJetRapidity.end());
                 sort(genvJetYOrdered.begin(), genvJetYOrdered.end(), JetYDescendingOrder);
                 //**************************************** end edit ************************************************************//
-                if (jetPtCutMax > jetPtCutMin){
-                    passesGenJetCut = genJets[0].pt < jetPtCutMax;
-                }
+                //andrew -- don't think we need these next three lines since our jetPtCutMax currently set at 0 -- 5.4.18
+                //if (jetPtCutMax > jetPtCutMin){
+                //    passesGenJetCut = genJets[0].pt < jetPtCutMax;
+                //    if (passesGenJetCut) npassesGenJetCut++;
+                //}
             }
             if (nGoodGenJets >= 2){
                 genSecondJ.SetPtEtaPhiE(genJets[1].pt, genJets[1].eta, genJets[1].phi, genJets[1].energy);
@@ -1740,6 +1830,9 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
         bool passesDPSPartonCut(1); 
         unsigned short nTotDPSPartons(0);
         vector<pair<TLorentzVector, TLorentzVector> > genDPSAndItsJets;
+
+        npassesDPSPartonCut++;
+
         if (hasPartonInfo){
             nTotDPSPartons = dpsParton_Eta->size();
             short jetInd(0);
@@ -1757,6 +1850,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
             if (fileName.find("PartonInfo") != string::npos && fileName.find("enriched") != string::npos &&
                     (nTotDPSPartons < 2 || fabs(dpsParton_Eta->at(0)) > 2.4 || fabs(dpsParton_Eta->at(1)) > 2.4)){
                 passesDPSPartonCut = 0;
+                if (!passesDPSPartonCut) npassesDPSPartonCut-- ;
             }
         }
         //=======================================================================================================//
@@ -1855,6 +1949,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 genZEta_Zinc0jet->Fill(genZ.Eta(), genWeight);
                 GLepBarePtZinc0jet->Fill(genLep1.Pt(), genWeight);
                 GLepBareEtaZinc0jet->Fill(genLep1.Eta(), genWeight);
+                genMT_Zinc0jet->Fill(genMT, genWeight);
                 if (doZ || doTT){
                     GLepBarePtZinc0jet->Fill(genLep2.Pt(), genWeight);
                     GLepBareEtaZinc0jet->Fill(genLep2.Eta(), genWeight);
@@ -1889,8 +1984,8 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     genFifthJetPt_2_Zinc5jet->Fill(genJets_20[4].pt, genWeight, mcEventWeight_);
                 }
                 if (nGoodGenJets_20 >= 6){
-                    genSixthJetPt_Zinc6jet  ->Fill(genJets_20[5].pt, genWeight, mcEventWeight_);
-                    genSixthJetPt_1_Zinc6jet->Fill(genJets_20[5].pt, genWeight, mcEventWeight_);
+                    //genSixthJetPt_Zinc6jet  ->Fill(genJets_20[5].pt, genWeight, mcEventWeight_);
+                    //genSixthJetPt_1_Zinc6jet->Fill(genJets_20[5].pt, genWeight, mcEventWeight_);
                 }
 				if (nGenJetsDR02Cut >= 1){
 					gendRLepCloseJet_Zinc1jet  ->Fill(genMindRjmu, genWeight, mcEventWeight_);
@@ -1919,6 +2014,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     genZMass_Zinc1jet->Fill(genZ.M(), genWeight);
                     GLepBarePtZinc1jet->Fill(genLep1.Pt(), genWeight);
                     GLepBareEtaZinc1jet->Fill(genLep1.Eta(), genWeight);
+                    genMT_Zinc1jet->Fill(genMT, genWeight);
                     if (doZ || doTT){
                         GLepBarePtZinc1jet->Fill(genLep2.Pt(), genWeight);
                         GLepBareEtaZinc1jet->Fill(genLep2.Eta(), genWeight);
@@ -1983,6 +2079,7 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     genJetsMass_Zinc2jet->Fill(genJet1Plus2.M(), genWeight);
                     GLepBarePtZinc2jet->Fill(genLep1.Pt(), genWeight);
                     GLepBareEtaZinc2jet->Fill(genLep1.Eta(), genWeight);
+                    genMT_Zinc2jet->Fill(genMT, genWeight);
                     if (doZ || doTT){
                         GLepBarePtZinc2jet->Fill(genLep2.Pt(), genWeight);
                         GLepBareEtaZinc2jet->Fill(genLep2.Eta(), genWeight);
@@ -2418,8 +2515,8 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 FifthJetPt_2_Zinc5jet->Fill(jets_20[4].pt, weight);
             }
             if (nGoodJets_20 >= 6){
-                SixthJetPt_Zinc6jet  ->Fill(jets_20[5].pt, weight);
-                SixthJetPt_1_Zinc6jet->Fill(jets_20[5].pt, weight);
+                //SixthJetPt_Zinc6jet  ->Fill(jets_20[5].pt, weight);
+                //SixthJetPt_1_Zinc6jet->Fill(jets_20[5].pt, weight);
             }
 			
 			if (nJetsDR02Cut >= 1){
@@ -3794,14 +3891,29 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
 
     std::cout << "\nGen Lepton Status --- " << std::endl;
     std::cout << "#events considered/looped over: " << nEvents << std::endl;
-    std::cout << "#events w/ gen leptons that have relevant PDG ID: " << npassesGenLepSelector << std::endl;
-    std::cout << "#events w/ gen leptons that are GLepBarePrompt: " << npassesGenLepBarePrompt << std::endl;
-    std::cout << "#events w/ prompt gen neutrinos: " << numGenPromptNeutrinos << std::endl;
-    std::cout << "#events w/ prompt gen electrons: " << numGenPromptElectrons << std::endl;
-    std::cout << "#events w/ prompt gen muons: " << numGenPromptMuons << std::endl;
-    std::cout << "#events w/ at least two good gen leptons: " << numHasAtLeastTwoGenLeptons << std::endl;
-    std::cout << "#events w/ passesGenLeptonCut: " << npassesGenLeptonCut << std::endl;
-	
+    std::cout << "#gen leptons in all events that have relevant PDG ID: " << npassesGenLepSelector << std::endl;
+    std::cout << "#gen leptons in all events that are GLepBarePrompt: " << npassesGenLepBarePrompt << std::endl;
+    std::cout << "#prompt gen neutrinos in all events: " << numGenPromptNeutrinos << std::endl;
+    std::cout << "#prompt gen electrons in all events: " << numGenPromptElectrons << std::endl;
+    std::cout << "#prompt gen muons in all events: " << numGenPromptMuons << std::endl;
+    std::cout << "#gen dressed charged leptons or neutrinos in all events that pass their resp. analysis cuts: " << npassesGenLeptonAnalysisCuts << std::endl;
+
+    std::cout << "\nGen Particle Info --- " << std::endl;
+    std::cout << "Gen Lepton Info: " << std::endl;
+    std::cout << "--> #events w/ at least two gen leptons that have passed resp. analysis cuts: " << numHasAtLeastTwoGenLeptons << std::endl;
+    std::cout << "--> #events that pass MTCut: " << npassesMTCut << std::endl;
+    std::cout << "^^^these events have required the two highest pT leptons to exactly one muon and one neutrino that have passed their resp. analysis requirements, and that their MT has passed the analysis cut as well" << std::endl;
+    std::cout << "--> #events with selected neutrino that pass METcut: " << npassesMETcut << std::endl;
+    std::cout << "--> #events w/ passesGenLeptonCut: " << npassesGenLeptonCut << std::endl;
+    std::cout << "^^^this should be the final event selection cut on leptons, MT, MET" << std::endl;
+    std::cout << "DPS Parton Info: " << std::endl;
+    std::cout << "--> #events w/ passesDPSPartonCut: " << npassesDPSPartonCut << std::endl;
+    std::cout << "Gen Jet Info: " << std::endl;
+    std::cout << "--> #gen jets in all events that very basic pT and eta cuts: " << npassesBasicGenJetCuts << std::endl;
+    std::cout << "--> #gen jets in all events that pass analysis cuts (pT, rapidity, dR(mu,j)): " << npassesAnalysisGenJetCuts << std::endl;
+    std::cout << "--> #events w/ all jets passing analysis requirements: " << npassesGenJetCut << std::endl;
+    std::cout << "#events that are considered in filling gen histograms: " << GENnEventsIncl0Jets << std::endl;
+    std::cout << "#events considered to fill gen histos with >= 1 GoodGenJets: " << GENnEventsIncl1Jets << std::endl; 	
 	
    if (doTTreweighting)       cout << "We run to TTbar with reweighting :   " << weightSum << "  and the original weight is :" << weightSumNoTopRew << endl;
     cout << " Trigger summary"<< endl;

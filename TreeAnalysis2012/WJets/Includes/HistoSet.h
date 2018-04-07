@@ -98,9 +98,9 @@ public:
     TH1D *FifthJetPt_Zinc5jet;
     TH1D *FifthJetPt_1_Zinc5jet;
     TH1D *FifthJetPt_2_Zinc5jet;
-    TH1D *SixthJetPt_Zinc6jet;
-    TH1D *SixthJetPt_1_Zinc6jet;
-    TH1D *SixthJetPt_2_Zinc6jet;
+    //TH1D *SixthJetPt_Zinc6jet;
+    //TH1D *SixthJetPt_1_Zinc6jet;
+    //TH1D *SixthJetPt_2_Zinc6jet;
 
     GenH1D *genFirstJetPt_Zinc1jet;
     GenH1D *genFirstJetPt_1_Zinc1jet;
@@ -117,9 +117,9 @@ public:
     GenH1D *genFifthJetPt_Zinc5jet;
     GenH1D *genFifthJetPt_1_Zinc5jet;
     GenH1D *genFifthJetPt_2_Zinc5jet;
-    GenH1D *genSixthJetPt_Zinc6jet;
-    GenH1D *genSixthJetPt_1_Zinc6jet;
-    GenH1D *genSixthJetPt_2_Zinc6jet;
+    //GenH1D *genSixthJetPt_Zinc6jet;
+    //GenH1D *genSixthJetPt_1_Zinc6jet;
+    //GenH1D *genSixthJetPt_2_Zinc6jet;
 
     TH2D *hresponseFirstJetPt_Zinc1jet;
     TH2D *hresponseFirstJetPt_1_Zinc1jet;
@@ -136,9 +136,9 @@ public:
     TH2D *hresponseFifthJetPt_Zinc5jet;
     TH2D *hresponseFifthJetPt_1_Zinc5jet;
     TH2D *hresponseFifthJetPt_2_Zinc5jet;
-    TH2D *hresponseSixthJetPt_Zinc6jet;
-    TH2D *hresponseSixthJetPt_1_Zinc6jet;
-    TH2D *hresponseSixthJetPt_2_Zinc6jet;
+    //TH2D *hresponseSixthJetPt_Zinc6jet;
+    //TH2D *hresponseSixthJetPt_1_Zinc6jet;
+    //TH2D *hresponseSixthJetPt_2_Zinc6jet;
 
     TH1D *LeadingJetPt_Zinc1jet_R21;
     TH1D *LeadingJetPt_Zinc2jet_R21;
@@ -1460,6 +1460,9 @@ public:
     TH1D *MT_Zinc1jet;
     TH1D *MT_Zinc2jet;
     TH1D *MT_Zinc3jet;
+    TH1D *genMT_Zinc0jet;
+    TH1D *genMT_Zinc1jet;
+    TH1D *genMT_Zinc2jet;
     
     //andrew -- comment out EWK histograms due to memory issues
 //    TH1D *ZNGoodJetsEWK_Zexc;

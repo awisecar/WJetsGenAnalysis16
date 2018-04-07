@@ -1,4 +1,4 @@
-//void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
+void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
 {
     string srcdir = "Sources/";
 
@@ -20,18 +20,18 @@
     }
         
     //------
-    int doWhat       = 17;    // just 12, 17 for now ...   
+    //int doWhat       = 52;    // just 12, 17 for now ...   
                               // 52 - W+jets aMC_NLO MC sample
                               // 10, 11, 12, ..., 17 - W+jets NLO FxFx alpha-s variations
                               // 100 - all ; 0 - data, 1 - background , 2 - tau ?, 3 - DY, 4 - W+jets,
                               // 51 - MC gen, 90 - PDF Syst., 1001 - do pull DY samples
         
-    int doSysRunning = 0;
+    //int doSysRunning = 0;
                              // 0 - no syst running, 100 - all systematic runnings,
                              // 1 - PU, 2 - JES, 3 - XSEC, 4 - JER, 5 - LepSF,
                              // 6 - BtagSF, 7 - MES, 8 - MER, 9 - WB, 10 - RESP
         
-    int doQCD        = 0;
+    //int doQCD        = 0;
                              // 0-3 : 4 combination between isolation/anti-isolation and MT cuts
         
     int doBJets      = -1;
@@ -398,7 +398,7 @@
         }
         
 	// amcNLO
-	// andrew -- seems that W+inc.jets xsec at NLO with FxFx is 60290 1/pb
+	// andrew -- seems that W+inc.jets xsec at NLO with FxFx is 60290 pb
 	// only gen info, signal region
 	if ( doWhat == 52){
                 int doGen = 1;

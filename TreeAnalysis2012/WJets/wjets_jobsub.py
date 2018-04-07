@@ -17,7 +17,7 @@ os.system('mkdir ' + mtmpdir)
 cmsswdir = '/afs/cern.ch/user/a/awisecar/WJetsGenAnalysis16/CMSSW_5_3_20/src'
 
 #doWhat = [10, 11, 12, 13, 14, 15, 16, 17, 52]
-doWhat = [17]
+doWhat = [22, 27]
 doQCD = [0]
 doSysRunning = [0]
 

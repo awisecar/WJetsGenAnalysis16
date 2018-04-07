@@ -1,8 +1,8 @@
 {
     string srcdir = "Sources/";
 
-//    //--- clean the old *_cc.d and *_cc.so files to allow for fresh compilation ---
-//    //the "system" lines allow the script to run shell commands without using shell directly
+    //--- clean the old *_cc.d and *_cc.so files to allow for fresh compilation ---
+    //the "system" lines allow the script to run shell commands without using shell directly
 //    string cmd = "if ls *_cc.d &> .ls_tmp.list; then rm *_cc.d; fi";
 //    system(cmd.c_str());
 //    cmd = "if ls *_cc.so &> .ls_tmp.list; then rm *_cc.so; fi";
