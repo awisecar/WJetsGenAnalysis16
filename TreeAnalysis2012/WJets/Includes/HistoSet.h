@@ -780,9 +780,9 @@ public:
     TH1D *lepPt_Zinc3jet;
     TH1D *lepPt_Zinc4jet;
     TH1D *lepPt_Zinc5jet;
-    TH1D *GLepBarePtZinc0jet;
-    TH1D *GLepBarePtZinc1jet;
-    TH1D *GLepBarePtZinc2jet;
+    TH1D *genLepPtZinc0jet;
+    TH1D *genLepPtZinc1jet;
+    TH1D *genLepPtZinc2jet;
     TH1D *lepPt_Zexc0jet;
     TH1D *lepPt_Zexc1jet;
     TH1D *lepPt_Zexc2jet;

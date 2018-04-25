@@ -20,7 +20,7 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
     }
         
     //------
-    //int doWhat       = 52;    // just 12, 17 for now ...   
+    //int doWhat       = 27;    // just 12, 17 for now ...   
                               // 52 - W+jets aMC_NLO MC sample
                               // 10, 11, 12, ..., 17 - W+jets NLO FxFx alpha-s variations
                               // 100 - all ; 0 - data, 1 - background , 2 - tau ?, 3 - DY, 4 - W+jets,

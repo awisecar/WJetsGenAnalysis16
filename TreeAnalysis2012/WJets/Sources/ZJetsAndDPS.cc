@@ -335,6 +335,7 @@ void ZJetsAndDPS::Loop(bool hasRecoInfo, bool hasGenInfo, int doQCD, bool doSSig
 
         //if (jentry % 100000 == 0) std::cout << jentry << std::endl;
         if (jentry % 100000 == 0) std::cout << jentry << " of " << nentries << std::endl;
+        //if (jentry % 10000 == 0) std::cout << jentry << " of " << nentries << std::endl;
         nb = fChain->GetEntry(jentry);  
         nbytes += nb;
         nEvents++;
@@ -1947,11 +1948,11 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                 genZPt_Zinc0jet->Fill(genZ.Pt(), genWeight);
                 genZRapidity_Zinc0jet->Fill(genZ.Rapidity(), genWeight);
                 genZEta_Zinc0jet->Fill(genZ.Eta(), genWeight);
-                GLepBarePtZinc0jet->Fill(genLep1.Pt(), genWeight);
+                genLepPtZinc0jet->Fill(genLep1.Pt(), genWeight);
                 GLepBareEtaZinc0jet->Fill(genLep1.Eta(), genWeight);
                 genMT_Zinc0jet->Fill(genMT, genWeight);
                 if (doZ || doTT){
-                    GLepBarePtZinc0jet->Fill(genLep2.Pt(), genWeight);
+                    genLepPtZinc0jet->Fill(genLep2.Pt(), genWeight);
                     GLepBareEtaZinc0jet->Fill(genLep2.Eta(), genWeight);
                 }
                 
@@ -2012,11 +2013,11 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     genZNGoodJetsFull_Zinc->Fill(1., genWeight, mcEventWeight_);
 					
                     genZMass_Zinc1jet->Fill(genZ.M(), genWeight);
-                    GLepBarePtZinc1jet->Fill(genLep1.Pt(), genWeight);
+                    genLepPtZinc1jet->Fill(genLep1.Pt(), genWeight);
                     GLepBareEtaZinc1jet->Fill(genLep1.Eta(), genWeight);
                     genMT_Zinc1jet->Fill(genMT, genWeight);
                     if (doZ || doTT){
-                        GLepBarePtZinc1jet->Fill(genLep2.Pt(), genWeight);
+                        genLepPtZinc1jet->Fill(genLep2.Pt(), genWeight);
                         GLepBareEtaZinc1jet->Fill(genLep2.Eta(), genWeight);
                     }
                     genZPt_Zinc1jet->Fill(genZ.Pt(), genWeight);
@@ -2077,11 +2078,11 @@ if (DEBUG) cout << "Stop after line " << __LINE__ << endl;
                     genTwoJetsPtDiff_Zinc2jet->Fill(genJet1Minus2.Pt(), genWeight);
                     genBestTwoJetsPtDiff_Zinc2jet->Fill(genBestJet1Minus2.Pt(), genWeight);
                     genJetsMass_Zinc2jet->Fill(genJet1Plus2.M(), genWeight);
-                    GLepBarePtZinc2jet->Fill(genLep1.Pt(), genWeight);
+                    genLepPtZinc2jet->Fill(genLep1.Pt(), genWeight);
                     GLepBareEtaZinc2jet->Fill(genLep1.Eta(), genWeight);
                     genMT_Zinc2jet->Fill(genMT, genWeight);
                     if (doZ || doTT){
-                        GLepBarePtZinc2jet->Fill(genLep2.Pt(), genWeight);
+                        genLepPtZinc2jet->Fill(genLep2.Pt(), genWeight);
                         GLepBareEtaZinc2jet->Fill(genLep2.Eta(), genWeight);
                     }
                     genZPt_Zinc2jet->Fill(genZ.Pt(), genWeight);

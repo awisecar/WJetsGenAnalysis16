@@ -1,7 +1,7 @@
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_1.root 
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_2.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_3.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_4.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_5.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_6.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_7.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_1.root 
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_2.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_3.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_4.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_5.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_6.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO-batch/WJToLNu_MG5_NLO_FxFx_2j_as_0124/WJToLNu_MG5_NLO_FxFx_2j_as_0124_7.root
