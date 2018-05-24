@@ -20,18 +20,19 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
     }
         
     //------
-    //int doWhat       = 27;    // just 12, 17 for now ...   
+//    int doWhat       = 52;
                               // 52 - W+jets aMC_NLO MC sample
                               // 10, 11, 12, ..., 17 - W+jets NLO FxFx alpha-s variations
+                              // 200 - all W+jets NLO FxFx alpha-s variations
                               // 100 - all ; 0 - data, 1 - background , 2 - tau ?, 3 - DY, 4 - W+jets,
                               // 51 - MC gen, 90 - PDF Syst., 1001 - do pull DY samples
         
-    //int doSysRunning = 0;
+  //  int doSysRunning = 0;
                              // 0 - no syst running, 100 - all systematic runnings,
                              // 1 - PU, 2 - JES, 3 - XSEC, 4 - JER, 5 - LepSF,
                              // 6 - BtagSF, 7 - MES, 8 - MER, 9 - WB, 10 - RESP
         
-    //int doQCD        = 0;
+  //  int doQCD        = 0;
                              // 0-3 : 4 combination between isolation/anti-isolation and MT cuts
         
     int doBJets      = -1;
@@ -80,7 +81,8 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
     bool doDataEff(0);
         
     int doMETcut = 0 ;     // if you want to apply MET cut
-    int jetPtMin = 30;
+    //int jetPtMin = 30;
+    int jetPtMin = 100;    //andrew -- test
     int jetPtMax = 0;      // 0 - for no jetPtMax cut
     int ZPtMin = 0 ;
     int ZEtaMin  = -999999;  // default value -999999  !!!!!!!  factor 100 to keep things integer .... eta 2.4  = eta Cut 240
@@ -257,61 +259,61 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
       
     //andrew -- alpha-S variations (8 of them)
     //alpha-S = 0.108
-    if ( doWhat == 10){
+    if ( doWhat == 200 || doWhat == 10){
         int doGen = 1;
-        ZJetsAndDPS WJetsNLO0jaS1("SMu_13TeV_WJets_FxFx_0J_0108as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+        ZJetsAndDPS WJetsNLO0jaS1("SMu_13TeV_WJets_FxFx_0J_0108as_dR_5311_List", muLumi*48786, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
         WJetsNLO0jaS1.Loop(0, 1, 0, 0, 0);
         //WJetsNLO0jaS1.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         
-        ZJetsAndDPS WJetsNLO1jaS1("SMu_13TeV_WJets_FxFx_1J_0108as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+        ZJetsAndDPS WJetsNLO1jaS1("SMu_13TeV_WJets_FxFx_1J_0108as_dR_5311_List", muLumi*7541.25, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
         WJetsNLO1jaS1.Loop(0, 1, 0, 0, 0);
         //WJetsNLO1jaS1.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         
-        ZJetsAndDPS WJetsNLO2jaS1("SMu_13TeV_WJets_FxFx_2J_0108as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+        ZJetsAndDPS WJetsNLO2jaS1("SMu_13TeV_WJets_FxFx_2J_0108as_dR_5311_List", muLumi*2615.72, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
         WJetsNLO2jaS1.Loop(0, 1, 0, 0, 0);
         //WJetsNLO2jaS1.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
     }
         
         //alpha-S = 0.110
-        if ( doWhat == 11){
+        if ( doWhat == 200 || doWhat == 11){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS2("SMu_13TeV_WJets_FxFx_0J_0110as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS2("SMu_13TeV_WJets_FxFx_0J_0110as_dR_5311_List", muLumi*49428, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS2.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS2.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS2("SMu_13TeV_WJets_FxFx_1J_0110as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS2("SMu_13TeV_WJets_FxFx_1J_0110as_dR_5311_List", muLumi*7715.5, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS2.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS2.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS2("SMu_13TeV_WJets_FxFx_2J_0110as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS2("SMu_13TeV_WJets_FxFx_2J_0110as_dR_5311_List", muLumi*2719.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS2.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS2.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         }
         
         //alpha-S = 0.112
-        if ( doWhat == 12){
+        if ( doWhat == 200 || doWhat == 12){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS3("SMu_13TeV_WJets_FxFx_0J_0112as_dR_5311_List", muLumi*50140.00, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS3("SMu_13TeV_WJets_FxFx_0J_0112as_dR_5311_List", muLumi*50086, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS3.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS3.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS3("SMu_13TeV_WJets_FxFx_1J_0112as_dR_5311_List", muLumi*7924.88, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS3("SMu_13TeV_WJets_FxFx_1J_0112as_dR_5311_List", muLumi*7935.05, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS3.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS3.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS3("SMu_13TeV_WJets_FxFx_2J_0112as_dR_5311_List", muLumi*2864.80, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS3("SMu_13TeV_WJets_FxFx_2J_0112as_dR_5311_List", muLumi*2841.25, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS3.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS3.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         }
 
         //alpha-S = 0.114
-        if ( doWhat == 13){
+        if ( doWhat == 200 || doWhat == 13){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS4("SMu_13TeV_WJets_FxFx_0J_0114as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS4("SMu_13TeV_WJets_FxFx_0J_0114as_dR_5311_List", muLumi*50974, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS4.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS4.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS4("SMu_13TeV_WJets_FxFx_1J_0114as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS4("SMu_13TeV_WJets_FxFx_1J_0114as_dR_5311_List", muLumi*8150.7, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS4.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS4.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
@@ -321,61 +323,61 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
         }
         
         //alpha-S = 0.117
-        if ( doWhat == 14){
+        if ( doWhat == 200 || doWhat == 14){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS5("SMu_13TeV_WJets_FxFx_0J_0117as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS5("SMu_13TeV_WJets_FxFx_0J_0117as_dR_5311_List", muLumi*52242, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS5.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS5.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS5("SMu_13TeV_WJets_FxFx_1J_0117as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS5("SMu_13TeV_WJets_FxFx_1J_0117as_dR_5311_List", muLumi*8490.75, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS5.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS5.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS5("SMu_13TeV_WJets_FxFx_2J_0117as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS5("SMu_13TeV_WJets_FxFx_2J_0117as_dR_5311_List", muLumi*3145.70, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS5.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS5.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         }
         
         //alpha-S = 0.119
-        if ( doWhat == 15){
+        if ( doWhat == 200 || doWhat == 15){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS6("SMu_13TeV_WJets_FxFx_0J_0119as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS6("SMu_13TeV_WJets_FxFx_0J_0119as_dR_5311_List", muLumi*53086, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS6.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS6.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS6("SMu_13TeV_WJets_FxFx_1J_0119as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS6("SMu_13TeV_WJets_FxFx_1J_0119as_dR_5311_List", muLumi*8665.3, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS6.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS6.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS6("SMu_13TeV_WJets_FxFx_2J_0119as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS6("SMu_13TeV_WJets_FxFx_2J_0119as_dR_5311_List", muLumi*3276.58, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS6.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS6.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         }
         
         //alpha-S = 0.122
-        if ( doWhat == 16){
+        if ( doWhat == 200 || doWhat == 16){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS7("SMu_13TeV_WJets_FxFx_0J_0122as_dR_5311_List", muLumi*49264.92, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS7("SMu_13TeV_WJets_FxFx_0J_0122as_dR_5311_List", muLumi*54486, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS7.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS7.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS7("SMu_13TeV_WJets_FxFx_1J_0122as_dR_5311_List", muLumi*8280.36, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS7("SMu_13TeV_WJets_FxFx_1J_0122as_dR_5311_List", muLumi*9077.15, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS7.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS7.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO2jaS7("SMu_13TeV_WJets_FxFx_2J_0122as_dR_5311_List", muLumi*3118.08, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO2jaS7("SMu_13TeV_WJets_FxFx_2J_0122as_dR_5311_List", muLumi*3468.8, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO2jaS7.Loop(0, 1, 0, 0, 0);
             //WJetsNLO2jaS7.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
         }
         
         //alpha-S = 0.124
-        if ( doWhat == 17){
+        if ( doWhat == 200 || doWhat == 17){
             int doGen = 1;
-            ZJetsAndDPS WJetsNLO0jaS8("SMu_13TeV_WJets_FxFx_0J_0124as_dR_5311_List", muLumi*55217.50, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO0jaS8("SMu_13TeV_WJets_FxFx_0J_0124as_dR_5311_List", muLumi*55096, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO0jaS8.Loop(0, 1, 0, 0, 0);
             //WJetsNLO0jaS8.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
-            ZJetsAndDPS WJetsNLO1jaS8("SMu_13TeV_WJets_FxFx_1J_0124as_dR_5311_List", muLumi*9291.78, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
+            ZJetsAndDPS WJetsNLO1jaS8("SMu_13TeV_WJets_FxFx_1J_0124as_dR_5311_List", muLumi*9250.8, 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
             WJetsNLO1jaS8.Loop(0, 1, 0, 0, 0);
             //WJetsNLO1jaS8.Loop(0, doGen, 0, 0, 0, doBJets, doPUStudy);
             
@@ -385,18 +387,6 @@ void runDYJets(int doWhat = 0, int doQCD = 0, int doSysRunning = 0)
         }
 
 
-	if ( doWhat == 22 ) {
-            int doGen = 1;
-            ZJetsAndDPS WJetsNLOalljaS3("SMu_13TeV_WJets_FxFx_allJ_0112as_dR_5311_List",  muLumi*60929.68 , 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
-            WJetsNLOalljaS3.Loop(0, 1, 0, 0, 0);
-        }
-
-        if ( doWhat == 27 ) {
-            int doGen = 1;
-            ZJetsAndDPS WJetsNLOalljaS3("SMu_13TeV_WJets_FxFx_allJ_0124as_dR_5311_List",  muLumi*67449.57 , 1., 0, 0, 0, 0, 1., jetPtMin, jetPtMax, ZPtMin, ZEtaMin, ZEtaMax);
-            WJetsNLOalljaS3.Loop(0, 1, 0, 0, 0);
-        }
-        
 	// amcNLO
 	// andrew -- seems that W+inc.jets xsec at NLO with FxFx is 60290 pb
 	// only gen info, signal region

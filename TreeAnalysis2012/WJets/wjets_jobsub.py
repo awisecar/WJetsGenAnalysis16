@@ -16,8 +16,8 @@ os.system('mkdir ' + mtmpdir)
 
 cmsswdir = '/afs/cern.ch/user/a/awisecar/WJetsGenAnalysis16/CMSSW_5_3_20/src'
 
-doWhat = [10, 11, 12, 13, 14, 15, 16, 17, 52]
-#doWhat = [12]
+#doWhat = [10, 11, 12, 13, 14, 15, 16, 17, 52]
+doWhat = [52]
 doQCD = [0]
 doSysRunning = [0]
 
@@ -48,7 +48,7 @@ for what in doWhat:
 
         	        print '.out filename ==>', tjobname_out
 
-      	                bsub = 'bsub -R "pool>30000" -q 1nw -o ' +tjobname_out+ ' -J ' +  tjobname + ' < ' + tjobname + ' '
+      	                bsub = 'bsub -R "pool>30000" -q 8nh -o ' +tjobname_out+ ' -J ' +  tjobname + ' < ' + tjobname + ' '
 			print bsub, '\n'
 			os.system(bsub)
 			os.system('sleep 1')
