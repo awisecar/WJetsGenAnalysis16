@@ -1,5 +1,0 @@
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0117/WJToLNu_MG5_NLO_FxFx_0j_as_0117_1.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0117/WJToLNu_MG5_NLO_FxFx_0j_as_0117_2.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0117/WJToLNu_MG5_NLO_FxFx_0j_as_0117_3.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0117/WJToLNu_MG5_NLO_FxFx_0j_as_0117_4.root
-/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0117/WJToLNu_MG5_NLO_FxFx_0j_as_0117_5.root

@@ -1,2 +1,17 @@
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_10.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_11.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_12.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_13.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_14.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_15.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_17.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_18.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_19.root
 /store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_1.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_20.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_2.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_3.root
 /store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_4.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_5.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_6.root
+/store/user/awisecar/WJets_2018.02.26/GENtree-NLO/WJToLNu_MG5_NLO_FxFx_0j_as_0119/WJToLNu_MG5_NLO_FxFx_0j_as_0119_9.root
